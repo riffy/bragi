@@ -18,8 +18,10 @@ An example how to use Bragi in a project will follow.
 [ODIN](https://www.4players.io/odin) is a cross-platform software development kit (SDK) that enables developers to integrate real-time chat technology into multiplayer games, apps and websites. It is maintained and developed by [4Players](https://github.com/4Players).
 
 # Getting started
-## Client
-⚠ In Progress
+## ODIN
+Bragi does **not** provide the necessary `odin.dll` that needs to be placed in your release/debug folder. 
+
+You can download it [here](https://github.com/4Players/odin-sdk/releases/) for your specific platform. Make sure that the version matches the supported version in the shield above.
 
 ## Using Bragi for your application
 You can use any websocket client, e.g. Browser extensions, to connect to Bragi.
