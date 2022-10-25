@@ -35,7 +35,7 @@ Example Message:
 ## 1 - SetAudioSettings
 Command: `SetAudioSettings`
 
-Bragi Initialization Required: `No`
+Bragi Initialization Required: `Yes`
 
 Updates the current audio settings in total.
 If IDs are provided that are not active on the client, an error is returned.
@@ -59,5 +59,10 @@ interface AudioSettings {
 
 Response Data: 
 - On Success: `None`
-- On Error: 
-    - `string`: ID of the device that was not found.
+
+Error Codes:
+Error Code | Description
+------------- | -------------
+`0` | Bragi initializion missing
+`1` | No input device found for the given `InputDeviceId`
+`2` | No output device found for the given `OutputDeviceId`

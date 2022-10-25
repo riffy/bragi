@@ -51,14 +51,14 @@ Response Data:
 Error Codes:
 Error Code | Description
 ------------- | -------------
-`0` | No input device found for the given `InputDeviceId`
-`1` | No input device found for the given `OutputDeviceId`
-`2` | Bragi is already initialized
+`0` | Bragi is already initialized
+`1` | No input device found for the given `InputDeviceId`
+`2` | No output device found for the given `OutputDeviceId`
 
 ```ts
 enum InitializeError {
+    BRAGI_INITIALIZATION_ERROR,
     INVALID_INPUT_DEVICE,
     INVALID_OUTPUT_DEVICE,
-    BRAGI_ALREADY_INITIALIZED
 }
 ```

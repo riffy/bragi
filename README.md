@@ -15,13 +15,11 @@ Bragi itself **doesn't** do anything on his own. Everytime the application is st
 An example how to use Bragi in a project will follow.
 
 ## What's ODIN ?
-[ODIN](https://www.4players.io/odin) is a cross-platform software development kit (SDK) that enables developers to integrate real-time chat technology into multiplayer games, apps and websites. It is maintained and developed by [4Players](https://github.com/4Players).
+[ODIN](https://www.4players.io/odin) is a cross-platform software development kit (SDK) that enables developers to integrate real-time chat technology into multiplayer games, apps and websites. It is maintained and developed by [4Players](https://github.com/4Players). This project is based using the Unity SDK of ODIN.
 
 # Getting started
-## ODIN
-Bragi does **not** provide the necessary `odin.dll` that needs to be placed in your release/debug folder. 
-
-You can download it [here](https://github.com/4Players/odin-sdk/releases/) for your specific platform. Make sure that the version matches the supported version in the shield above.
+## Developing Bragi
+If you want to help / improve Bragi, please read the [First Steps](/Documentation/first-steps.md). If you encounter an error, feel free to open an issue.
 
 ## Using Bragi for your application
 You can use any websocket client, e.g. Browser extensions, to connect to Bragi.
@@ -37,15 +35,27 @@ It seemed fun to use norse mythology for this project, but don't worry, only the
 
 _For additional points: `Iðunn` is the wife of Bragi, also a fitting name for the websocket client side in your application_
 
+# Roadmap / TODOs
+
+- [ ] (Halted) Make the `odin-wrapper-csharp` a submodule from [here](https://github.com/4Players/odin-sdk-unity/tree/master/Runtime/OdinWrapper) or if there is a common C# SDK.
+- [ ] ODIN
+    - [ ] Broadcast all ODIN Events to the websocket
+    - [ ] Room Methods
+    - [ ] Peer Methods
+- [ ] Audio
+    - [ ] Integrate microphone reader and write to the respective ODIN rooms
+    - [ ] Play audio based on received MediaStream from ODIN
+    - [ ] Broadcast audio events to the websocket
+    - [ ] Integrate a simplified spatial audio feature based on positions of peers 
+    - [ ] Support Push-To-Talk 
+    - [ ] Support Push-To-Talk on a per-room-basis
+
 # Contributing
 Since this is my first real C# project, feel free to contribute via pull requests, especially in regards to build or assembly things.
 
 # Credits
 We are using code from the following open source projects (in no particular order):
-* [ODIN](https://github.com/4Players/odin-sdk-unity)
+* [ODIN Unity SDK](https://github.com/4Players/odin-sdk-unity)
 * [NAudio](https://github.com/naudio/NAudio) - Capturing audio input and playing audio to set devices
 * [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) - Parsing commands received by the websocket client
 * [Websocket-Sharp](https://github.com/sta/websocket-sharp) - Communication between applications
-
-## License
-⚠ In Progress
