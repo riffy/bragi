@@ -36,22 +36,56 @@ It seemed fun to use norse mythology for this project, but don't worry, only the
 _For additional points: `Iðunn` is the wife of Bragi, also a fitting name for the websocket client side in your application_
 
 # Roadmap / TODOs
+## General
 
-- [ ] (Halted) Make the `odin-wrapper-csharp` a submodule from [here](https://github.com/4Players/odin-sdk-unity/tree/master/Runtime/OdinWrapper) or if there is a common C# SDK.
-- [ ] ODIN
-    - [ ] Broadcast all ODIN Events to the websocket
-    - [ ] Room Methods
-    - [ ] Peer Methods
-- [ ] Audio
-    - [ ] Integrate microphone reader and write to the respective ODIN rooms
-    - [ ] Play audio based on received MediaStream from ODIN
-    - [ ] Broadcast audio events to the websocket
-    - [ ] Integrate a simplified spatial audio feature based on positions of peers 
-    - [ ] Support Push-To-Talk 
-    - [ ] Support Push-To-Talk on a per-room-basis
+Basics:![](https://geps.dev/progress/0)
+Name | Progress | Description
+------------- | ------------- | -------------
+`Submoduling` | ![](https://geps.dev/progress/0) | (Halted) Make the `odin-wrapper-csharp` a submodule from [here](https://github.com/4Players/odin-sdk-unity/tree/master/Runtime/OdinWrapper) or if there is a common C# SDK.
+
+## ODIN
+
+Basics: ![](https://geps.dev/progress/1)
+Name | Progress | Description
+------------- | ------------- | -------------
+`Event Broadcast` | ![](https://geps.dev/progress/0) | Broadcast all ODIN Events to the websocket
+`Room Methods` | ![](https://geps.dev/progress/5) | Wrap room methods in commands
+`Peer Methods` | ![](https://geps.dev/progress/1) | Wrap peer methods in commands 
+
+## Audio
+
+Basics: ![](https://geps.dev/progress/1)
+Name | Progress | Description
+------------- | ------------- | -------------
+`Event Broadcast` | ![](https://geps.dev/progress/0) | Broadcast audio events to the websocket
+`Play Audio` | ![](https://geps.dev/progress/0) | Play audio based on received MediaStream from ODIN
+`Spatial Audio` | ![](https://geps.dev/progress/0) | Integrate a simplified spatial audio feature based on positions of peers 
+`Record Audio` | ![](https://geps.dev/progress/0) | Integrate microphone reader and write to the respective ODIN rooms
+`Push-To-Talk` | ![](https://geps.dev/progress/0) | Support Push-To-Talk 
+`Push-To-Talk Enhancement` | ![](https://geps.dev/progress/0) | Support Push-To-Talk on a per-room-basis
 
 # Contributing
 Since this is my first real C# project, feel free to contribute via pull requests, especially in regards to build or assembly things.
+
+## Contribution Guidline
+When doing a commit or pull request a similiar convention like in [Karma](http://karma-runner.github.io/6.3/dev/git-commit-msg.html) is used:
+
+```
+<type>: <scope>: <message>
+
+<Description>
+```
+
+Type could be `tech`, `fix`, `feat`, `chore`.
+Scope could be `Bragi`, `ODIN`, `Util`...
+
+Example Commit Message:
+```
+tech: ODIN: Update wrapper version to 1.2.1
+
+Updated the used version in the odin-wrapper-csharp to the newest version. No changes required
+```
+
 
 # Credits
 We are using code from the following open source projects (in no particular order):
