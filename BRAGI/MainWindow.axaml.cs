@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using BRAGI.Util;
 using BRAGI.Valhalla;
 using System;
+using System.ComponentModel;
 
 namespace BRAGI;
 
@@ -27,5 +28,10 @@ public partial class MainWindow : Window
     private void ClearLogBtn_Click(object sender, RoutedEventArgs e)
     {
         ConsoleBox.Clear();
+    }
+
+    private void Window_Closing(object sender, CancelEventArgs e)
+    {
+        Environment.Exit(0);
     }
 }

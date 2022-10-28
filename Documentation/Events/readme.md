@@ -8,10 +8,10 @@ Audio and additional events are also broadcasted.
 Property | Type | Description
 ------------ | ------------- | -------------
 Event | `string` | Name of the event that occured
-Data | `object{}` | Additional data, such as parameters / arguments that describe the event that occured. Is **always** present, but can be empty.
+Data | `object{}` | Additional data, that wraps the arguments of the event in an `Args` property and provides additional data based on the event. Is **always** present, but can be empty.
 
-The following example message is broadcasted on the websocket, when the client joins a room. Read [ConnectionStateChanged](/Documentation/Events/odin.md#0---connectionstatechanged) for more info
+The following example message is broadcasted on the websocket, when the connection state to a room changes. Read [ConnectionStateChanged](/Documentation/Events/odin.md#0---connectionstatechanged) for more info
 Example Broadcast:
 ```json
-{ "Event": "ConnectionStateChanged", "Data": {"ConnectionState": 1, "ChangeReason": 0, "Retry": 0} }
+{ "Event": "ConnectionStateChanged", "Data": {"RoomId": "TestRoom", "Args": {"ConnectionState": 1, "ChangeReason": 0, "Retry": 0}}}
 ```

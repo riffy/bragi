@@ -59,9 +59,9 @@ public static class BragiCommands
         return Commands[key];
     }
 
-    public static Task<object> CallFunction(string key, JsonObject? parameters)
+    public static async Task<object> CallFunction(string key, JsonObject? parameters)
     {
-        return Commands[key].Execute(parameters);
+        return await Commands[key].Execute(parameters);
     }
 }
 

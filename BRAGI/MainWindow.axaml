@@ -5,7 +5,8 @@
         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
         x:Class="BRAGI.MainWindow"
         Title="BRAGI" Height="450" Width="500"
-		CanResize="False">
+		CanResize="False"
+		Closing="Window_Closing">
 	<TabControl>
 		<TabItem Header="Valhalla">
 			<Grid>

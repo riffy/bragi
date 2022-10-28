@@ -57,6 +57,11 @@ enum JoinRoomError {
 }
 ```
 
+Example Message:
+```json
+{"uuid":"1234","command":"JoinRoom","params":{"RoomName":"TestRoom","TokenOrUserId":"PiepMatz"}}
+```
+
 
 ### 0.1 - LeaveRoom
 Command: `LeaveRoom`
@@ -90,4 +95,9 @@ Error Code | Description
 enum LeaveRoomError {
     BRAGI_NOT_INITIALIZED
 }
+```
+
+Example Message:
+```json
+{"uuid":"1234","command":"LeaveRoom","params":{"RoomName":"TestRoom"}}
 ```
