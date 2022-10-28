@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace BRAGI.Bragi.Commands;
 
@@ -47,8 +48,7 @@ public class JoinRoom : BragiCommand<JoinRoomParameter>
         {
             ["Id"] = room.RoomId,
             ["Peers"] = room.GetRemotePeersIds(false),
-            ["Self"] = await OdinParser.ParsePeer(room.Self),
-            ["Config"] = room.Config
+            ["Self"] = await OdinParser.ParsePeer(room.Self)
         };
     }
 }
