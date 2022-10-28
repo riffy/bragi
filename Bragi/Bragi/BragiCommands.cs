@@ -2,95 +2,119 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using Newtonsoft.Json.Linq;
 using BRAGI.Util;
 using BRAGI.Bragi.Commands;
 using Bragi.Bragi.Commands;
+using System.Text.Json.Nodes;
 
-namespace BRAGI.Bragi
+namespace BRAGI.Bragi;
+
+public abstract class BragiCommand
 {
-    public class OptionalParameter : Attribute
+    public abstract Task<object> Execute(JsonObject? param);
+}
+
+public abstract class BragiCommand<T> : BragiCommand where T : BragiParameter
+{
+    public static string Command = "";
+    public abstract bool CheckParameters(JsonObject? parameters);
+    public abstract T? ParseParameters(JsonObject? parameters);
+    public override async Task<object> Execute(JsonObject? param)
     {
-        public OptionalParameter() { }
+        return await ExecuteInternal(ParseParameters(param));
+    }
+    public abstract Task<object> ExecuteInternal(T? param);
+}
+
+public abstract class BragiParameter { }
+
+public class NoParameter : BragiParameter { }
+
+public class OptionalParameter : Attribute
+{
+    public OptionalParameter() { }
+}
+
+public static class BragiCommands
+{
+    //public static Dictionary<string, Func<JsonObject?, Task<object>>> Commands = new();
+    public static Dictionary<string, BragiCommand> Commands = new();
+    public static void AssociateCommands()
+    {
+        // General Valhalla Commands
+        Commands.Add(nameof(Ping), new Ping());
+        // Bragi Commands
+        // -- General
+        Commands.Add(nameof(Initialize), new Initialize());
+        Commands.Add(nameof(GetAudioDevices), new GetAudioDevices());
+        Commands.Add(nameof(GetAudioSettings), new GetAudioSettings());
+        Commands.Add(nameof(SetAudioSettings), new SetAudioSettings());
+        // -- Odin Specific
+        Commands.Add(nameof(JoinRoom), new JoinRoom());
+        Commands.Add(nameof(LeaveRoom), new LeaveRoom());
     }
 
-    public static class BragiCommands
+    public static BragiCommand GetFunction(string key)
     {
-        public static IDictionary<string, Func<JObject, Task<object>>> Commands
-            = new Dictionary<string, Func<JObject, Task<object>>>();
-
-        public static void AssociateCommands(Valhalla.Valhalla valhalla)
-        {
-            // General Valhalla Commands
-            Commands["Ping"] = CPong.Pong;
-            // Bragi Commands
-            // -- General
-            Commands["GetAudioDevices"] = CGetAudioDevices.GetAudioDevices;
-            Commands["Initialize"] = CInitialize.Initialize;
-            Commands["JoinRoom"] = CJoinRoom.JoinRoom;
-            Commands["LeaveRoom"] = CLeaveRoom.LeaveRoom;
-            // Commands["Initialize"]
-            // -- Odin Specific
-        }
-
-        public static Func<JObject, object> GetFunction(string key)
-        {
-            return Commands[key];
-        }
-
-        public static Task<object> CallFunction(string key, JObject parameters)
-        {
-            return Commands[key](parameters);
-        }
+        return Commands[key];
     }
 
-    public enum CommandError
+    public static Task<object> CallFunction(string key, JsonObject? parameters)
     {
-        INVALID_PARAMETER
+        return Commands[key].Execute(parameters);
+    }
+}
+
+public enum CommandError
+{
+    INVALID_PARAMETER
+}
+
+[Serializable]
+public class CommandException : Exception
+{
+    private readonly int _errorCode;
+    public int ErrorCode { get { return _errorCode; } }
+
+    private readonly string? _text;
+    public string? Text { get { return _text; } }
+
+    protected CommandException() : base()
+    { }
+    public CommandException(int errorCode, string text)
+        : base(string.Format(text))
+    {
+        _errorCode = errorCode;
+        _text = text;
     }
 
-    [Serializable]
-    public class CommandException : Exception
+    // Ensure Exception is Serializable
+    protected CommandException(SerializationInfo info, StreamingContext ctxt)
+        : base(info, ctxt)
+    { }
+}
+
+[Serializable]
+public class InvalidParameterException : Exception
+{
+    private readonly string? _missingKey;
+    public string? MissingKey { get { return _missingKey; } }
+
+    protected InvalidParameterException() : base()
+    { }
+
+    public InvalidParameterException(string missingKey)
+        : base(
+            missingKey == "" ?
+            "Message is missing 'params' attribute." :
+            string.Format("Provided parameters is missing key {0}", missingKey)
+              )
     {
-        private readonly int _errorCode;
-        public int ErrorCode { get { return _errorCode; } }
-
-        private readonly string _text;
-        public string Text { get { return _text; } }
-
-        protected CommandException() : base()
-        { }
-        public CommandException(int errorCode, string text)
-            : base(string.Format(text))
-        {
-            _errorCode = errorCode;
-            _text = text;
-        }
-
-        // Ensure Exception is Serializable
-        protected CommandException(SerializationInfo info, StreamingContext ctxt)
-            : base(info, ctxt)
-        { }
+        _missingKey = missingKey;
     }
 
-    [Serializable]
-    public class InvalidParameterException : Exception
-    {
-        private readonly string _missingKey;
-        public string MissingKey { get { return _missingKey; } }
-
-        protected InvalidParameterException() : base()
-        { }
-
-        public InvalidParameterException(string missingKey)
-            : base(string.Format("Provided parameter object is missing key {0}", missingKey))
-        {
-            _missingKey = missingKey;
-        }
-
-        // Ensure Exception is Serializable
-        protected InvalidParameterException(SerializationInfo info, StreamingContext ctxt)
-            : base(info, ctxt)
-        { }
-    }
+    // Ensure Exception is Serializable
+    protected InvalidParameterException(SerializationInfo info, StreamingContext ctxt)
+        : base(info, ctxt)
+    { }
 }

@@ -28,11 +28,11 @@ namespace OdinNative.Odin.Media
         /// </summary>
         /// <param name="key">MediaId</param>
         /// <returns>MediaStream or null</returns>
-        public MediaStream this[long key]
+        public MediaStream? this[long key]
         {
             get
             {
-                if (_Medias != null && _Medias.TryGetValue(key, out MediaStream media))
+                if (_Medias != null && _Medias.TryGetValue(key, out MediaStream? media))
                     return media;
 
                 return null;
@@ -111,9 +111,9 @@ namespace OdinNative.Odin.Media
         /// <param name="x">stream</param>
         /// <param name="y">stream</param>
         /// <returns>true if equal or false</returns>
-        public bool Equals(MediaStream x, MediaStream y)
+        public bool Equals(MediaStream? x, MediaStream? y)
         {
-            return x.Id == y.Id;
+            return x!.Id == y!.Id;
         }
 
         /// <summary>
@@ -175,8 +175,8 @@ namespace OdinNative.Odin.Media
 
         internal bool Free(long id)
         {
-            bool result = _Medias.TryRemove(id, out MediaStream media);
-            if (result) media.Dispose();
+            bool result = _Medias.TryRemove(id, out MediaStream? media);
+            if (result) media?.Dispose();
             return result;
         }
 
