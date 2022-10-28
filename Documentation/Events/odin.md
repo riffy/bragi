@@ -1,11 +1,6 @@
 # ODIN
 The [ODIN Events](/Documentation/Events/odin.md) listed below are directly caused by ODIN and are forwarded as broadcast messages. Please consult the [ODIN Manual](https://www.4players.io/odin/sdk/unity/). The typescript interfaces are based on ODIN version `1.2.1`.
 
-```
-Maybe remove this
-Some events may have data stripped from, e.g. the media of [MediaAddedEvent](#1---mediaaddedevent) and encoding/buffer from any [UserData](https://www.4players.io/odin/sdk/unity/classes/userdata/).
-```
-
 ## 0 - ConnectionStateChanged
 Property | Info
 ------------ | -------------
@@ -68,19 +63,19 @@ Example Broadcast:
 { "Event": "MediaActiveStateChanged", "Data": {"RoomId": "TestRoom", "Args": {"Active": true, "MediaStreamId": 1337, "PeerId": 123}}}
 ```
 
-## 1 - MediaAdded
-```
-⚠ This Event is currently not broadcasted as it is being worked upon (playing audio).
-The need for this event is also questionable at best.
-```
+## 2 - MediaAdded
+⚠ 
+> This Event is currently not broadcasted as it is being worked upon (playing audio).
+> The need for this event is also questionable at best.
 
-## 1 - MediaRemoved
-```
-⚠ This Event is currently not broadcasted as it is being worked upon (playing audio).
-The need for this event is also questionable at best.
-```
 
-## 2 - PeerJoined
+## 3 - MediaRemoved
+⚠ 
+> This Event is currently not broadcasted as it is being worked upon (playing audio).
+> The need for this event is also questionable at best.
+
+
+## 4 - PeerJoined
 Property | Info
 ------------ | -------------
 Event | `PeerJoined`
@@ -104,7 +99,7 @@ Example Broadcast:
 { "Event": "PeerJoined", "Data": {"RoomId": "TestRoom", "Args": {"PeerId": 123, "UserId": "PiepMatz"}}}
 ```
 
-## 3 - PeerLeft
+## 5 - PeerLeft
 Property | Info
 ------------ | -------------
 Event | `PeerJoined`
@@ -127,9 +122,9 @@ Example Broadcast:
 { "Event": "PeerJoined", "Data": {"RoomId": "TestRoom", "Args": {"PeerId": 123}}}
 ```
 
-## 4 - MessageReceived
+## 6 - MessageReceived
 
-⚠ Warning: This event is not fully wrapped, there are open todos
+⚠ Warning: This event is not fully wrapped, there are open TODOs
 
 Property | Info
 ------------ | -------------
@@ -154,9 +149,9 @@ Example Broadcast:
 { "Event": "MessageReceived", "Data": {"RoomId": "TestRoom", "Args": {"PeerId": 123, "Data": ""}}}
 ```
 
-## 4 - PeerUserDataChanged
+## 7 - PeerUserDataChanged
 
-⚠ Warning: This event is not fully wrapped, there are open todos
+⚠ Warning: This event is not fully wrapped, there are open TODOs
 
 Property | Info
 ------------ | -------------
@@ -181,9 +176,9 @@ Example Broadcast:
 { "Event": "PeerUserDataChanged", "Data": {"RoomId": "TestRoom", "Args": {"PeerId": 123, "Data": ""}}}
 ```
 
-## 4 - RoomUserDataChanged
+## 8 - RoomUserDataChanged
 
-⚠ Warning: This event is not fully wrapped, there are open todos
+⚠ Warning: This event is not fully wrapped, there are open TODOs
 
 Property | Info
 ------------ | -------------
