@@ -3,8 +3,11 @@ Bragi does **not** provide the necessary `odin.dll` that needs to be placed in y
 
 You can download it [here](https://github.com/4Players/odin-sdk/releases/) for your specific platform. Make sure that the version matches the supported version in the shield above.
 ## Build from Scratch
+
+**IMPORTANT**: This repo uses [AvalonUI](https://avaloniaui.net/). The extension [AvaloniaVS](https://github.com/AvaloniaUI/AvaloniaVS) is recommend during development.
+
 1. Clone this repo
-2. Download the `odin.dll` mentioned above and place it in the `/Bragi` folder alongside `App.xaml.cs`
+2. Download the `odin.dll` mentioned above and place it in the `/Bragi` folder alongside `App.axaml.cs`
 3. Open the Project with Visual Studio
 4. Download the necessary NuGet packages
 5. Adjust the properties of the `odin.dll` and set:

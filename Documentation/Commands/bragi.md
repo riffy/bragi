@@ -40,13 +40,13 @@ Name | Type | Required ? | Description
 ```ts
 interface InitializeCommand {
     AudioSettings: AudioSettings;
-    OdinVersion: string;
-    AccessKey: string;
+    OdinVersion?: string;
+    AccessKey?: string;
 }
 ```
 
 Response Data:
-- On Success: `None`
+- On Success: `""`
 
 Error Codes:
 Error Code | Description

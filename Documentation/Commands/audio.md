@@ -45,20 +45,20 @@ Name | Type | Required ? |Description
 ------------- | ------------- | ------------- | -------------
 `InDeviceId` | `string` | Yes | The ID that shall be used for the audio input device (e.g. microphone)
 `OutDeviceId` | `string` | Yes | The ID that shall be used for the audio output device (e.g. speaker)
-`Volume` | `number` | No | The volume to use for the output. Default: `100`
-`PushToTalkKey` | `number` | No | The general push-to-talk [keycode](https://www.toptal.com/developers/keycode). Can also be set on a per-room basis. If missing or set to `0` (None), push-to-talk is deactivated Default: `0`
+`Volume` | `number` | No | The volume to use for the output. If not set, keeps last value. Default: `100`
+`PushToTalkKey` | `number` | No | The general push-to-talk [keycode](https://www.toptal.com/developers/keycode). Can also be set on a per-room basis. If not set, keeps last value. If set to `0` (None), push-to-talk is deactivated Default: `0`
 
 ```ts
 interface AudioSettings {
     InDeviceId: string;
     OutDeviceId: string;
-    Volume: number;
-    PushToTalkKey: number;
+    Volume?: number;
+    PushToTalkKey?: number;
 }
 ```
 
 Response Data: 
-- On Success: `None`
+- On Success: `""`
 
 Error Codes:
 Error Code | Description

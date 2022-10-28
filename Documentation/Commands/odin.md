@@ -24,7 +24,25 @@ interface JoinRoomCommand {
 ```
 
 Response Data: 
-⚠ In Progress
+Data | Type | Description
+------------- | ------------- | -------------
+`Id` | `string` | The Id or name of the room that was joined
+`Peers` | `number[]` | An array of all other peers in that room (excludes self)
+`Self` | `object{}` | A simplified peer object of one self
+
+```ts
+interface SimplifiedPeer {
+    Id: number;
+    RoomName: string;
+    UserId: string | null;
+}
+
+interface JoinRoomResponse {
+    Id: string;
+    Peers: number[];
+    Self: SimplifiedPeer;
+}
+```
 
 Error Codes:
 Error Code | Description
