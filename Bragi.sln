@@ -3,42 +3,40 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bragi", "Bragi\Bragi.csproj", "{39CCEE01-36D3-490C-ADEF-64581EF57A2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BRAGI", "BRAGI\BRAGI.csproj", "{7F2350E8-B888-4BE9-A810-3291E1F8285E}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CShared", "odin-wrapper-csharp\CShared.shproj", "{6F0C8D68-E5C1-421F-9A05-9529B087B718}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0491D24D-6E28-4266-9154-428855E8C1DC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{19D54456-8EA5-43A6-BAE3-02CEEE7A32D6}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CShared", "odin-wrapper-csharp\CShared.shproj", "{6F0C8D68-E5C1-421F-9A05-9529B087B718}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Debug|x64.ActiveCfg = Debug|x64
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Debug|x64.Build.0 = Debug|x64
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Debug|x86.ActiveCfg = Debug|x64
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Release|Any CPU.ActiveCfg = Release|x64
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Release|x64.ActiveCfg = Release|x64
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Release|x64.Build.0 = Release|x64
-		{39CCEE01-36D3-490C-ADEF-64581EF57A2C}.Release|x86.ActiveCfg = Release|x64
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Debug|x64.ActiveCfg = Debug|x64
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Debug|x64.Build.0 = Debug|x64
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Release|x64.ActiveCfg = Release|x64
+		{7F2350E8-B888-4BE9-A810-3291E1F8285E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {AB0D0272-99A8-47CA-899F-A93834E4E527}
+		SolutionGuid = {5B405956-91D0-487F-B438-3844E1AD159B}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		odin-wrapper-csharp\CShared.projitems*{39ccee01-36d3-490c-adef-64581ef57a2c}*SharedItemsImports = 4
 		odin-wrapper-csharp\CShared.projitems*{6f0c8d68-e5c1-421f-9a05-9529b087b718}*SharedItemsImports = 13
+		odin-wrapper-csharp\CShared.projitems*{7f2350e8-b888-4be9-a810-3291e1f8285e}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

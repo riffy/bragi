@@ -1,55 +1,72 @@
-﻿using BRAGI.Util;
+﻿using Avalonia.Input;
+using BRAGI.Util;
 using NAudio.CoreAudioApi;
-using Newtonsoft.Json.Linq;
 using OdinNative.Odin;
+using OdinNative.Odin.Room;
+using System;
+using System.Collections.Generic;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace BRAGI.Bragi.Commands
+namespace BRAGI.Bragi.Commands;
+
+enum InitializeError
 {
-    enum InitializeError
+    BRAGI_INITIALIZATION_ERROR,
+    INVALID_INPUT_DEVICE,
+    INVALID_OUTPUT_DEVICE
+}
+
+public class InitializeParameter : BragiParameter
+{
+    public AudioSettingsParameter AudioSettings { get; private set; }
+    [OptionalParameter]
+    public string OdinServer { get; private set; }
+    [OptionalParameter]
+    public string AccessKey { get; private set; }
+    public InitializeParameter(AudioSettingsParameter audioSettings, string odinServer, string accessKey)
     {
-        BRAGI_INITIALIZATION_ERROR,
-        INVALID_INPUT_DEVICE,
-        INVALID_OUTPUT_DEVICE
+        AudioSettings = audioSettings;
+        OdinServer = odinServer;
+        AccessKey = accessKey;
     }
-    public interface InitializeParameters
+}
+
+public class Initialize : BragiCommand<InitializeParameter>
+{
+    public override bool CheckParameters(JsonObject? parameters)
     {
-        SetAudioSettingsParameter AudioSettings { get; set; }
-        [OptionalParameter]
-        string OdinServer { get; set; }
-        [OptionalParameter]
-        string AccessKey { get; set; }
+        return JsonValidator.CheckParameters<InitializeParameter>(parameters);
     }
 
-    public static class CInitialize
+    public async override Task<object> ExecuteInternal(InitializeParameter? parameters)
     {
-        public static async Task<object> Initialize(JObject parameters)
+        if (Bragi.Instance!.State == BRAGISTATE.INITIALIZED) throw new CommandException((int)InitializeError.BRAGI_INITIALIZATION_ERROR, "Bragi already initialized");
+        OdinDefaults.AccessKey = parameters!.AccessKey;
+        OdinDefaults.Server = parameters.OdinServer;
+        Bragi.Instance.Initialize();
+        try
         {
-            if (!JsonValidator.CheckParameters<InitializeParameters>(parameters)) return "";
-            if (!JsonValidator.CheckParameters<SetAudioSettingsParameter>((JObject)parameters["AudioSettings"])) return "";
-            if (Bragi.Instance.State == BRAGISTATE.INITIALIZED) throw new CommandException((int)InitializeError.BRAGI_INITIALIZATION_ERROR, "Bragi already initialized");
-            MMDevice inDevice = Audio.GetAudioDeviceByID((string)parameters["AudioSettings"]["InDeviceId"], DEVICETYPE.IN);
-            if (inDevice == null) throw new CommandException((int)InitializeError.INVALID_INPUT_DEVICE, string.Format("{0}", (string)parameters["AudioSettings"]["InDeviceId"]));
-            MMDevice outDevice = Audio.GetAudioDeviceByID((string)parameters["AudioSettings"]["OutDeviceId"], DEVICETYPE.OUT);
-            if (outDevice == null) throw new CommandException((int)InitializeError.INVALID_OUTPUT_DEVICE, string.Format("{0}", (string)parameters["AudioSettings"]["OutDeviceId"]));
-            if (parameters.ContainsKey("OdinServer"))
-            {
-                OdinDefaults.Server = (string)parameters.GetValue("OdinServer");
-            }
-            if (parameters.ContainsKey("AccessKey"))
-            {
-                OdinDefaults.AccessKey = (string)parameters.GetValue("AccessKey");
-            }
-            Bragi.Instance.Initialize();
-            Bragi.Instance.Settings.ApplySettings(
-                inDevice,
-                outDevice,
-                (parameters["AudioSettings"]?["Volume"] != null) ? (int)parameters["AudioSettings"]?["Volume"] : 100,
-                (parameters["AudioSettings"]?["PushToTalkKey"] != null) ? (Key)(int)parameters["AudioSettings"]?["PushToTalkKey"] : Key.None);
+            SetAudioSettings set = new();
+            await set.ExecuteInternal(parameters.AudioSettings);
             return "";
-            
         }
+        catch
+        {
+            // If an error occurs on post-initialization, perform a cleanup.
+            Bragi.Instance.CleanUp();
+            throw;
+        }
+    }
 
+    public override InitializeParameter? ParseParameters(JsonObject? parameters)
+    {
+        if (!CheckParameters(parameters)) return null;
+        AudioSettingsParameter? audioSettings = new SetAudioSettings().ParseParameters((JsonObject)parameters!["AudioSettings"]!);
+        if (audioSettings == null) return null;
+        return new InitializeParameter(
+            audioSettings,
+            parameters.ContainsKey("OdinServer") ? (string)parameters["OdinServer"]! : OdinDefaults.Server,
+            parameters.ContainsKey("AccessKey") ? (string)parameters["AccessKey"]! : OdinDefaults.AccessKey);
     }
 }

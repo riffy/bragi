@@ -1,39 +1,54 @@
 ﻿using BRAGI.Util;
-using NAudio.CoreAudioApi;
-using Newtonsoft.Json.Linq;
 using OdinNative.Odin.Room;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace BRAGI.Bragi.Commands
+namespace BRAGI.Bragi.Commands;
+
+enum JoinRoomError
 {
-    enum JoinRoomError
+    BRAGI_INITIALIZATION_ERROR,
+    ROOM_JOIN_FAILURE
+}
+public class JoinRoomParameter : BragiParameter
+{
+    public string RoomName { get; private set; }
+    public string TokenOrUserId { get; private set; }
+    public JoinRoomParameter(string roomName, string tokenOrUserId)
     {
-        BRAGI_INITIALIZATION_ERROR,
-        ROOM_JOIN_FAILURE
+        RoomName = roomName;
+        TokenOrUserId = tokenOrUserId;
     }
-    public interface JoinRoomParameters
+}
+
+public class JoinRoom : BragiCommand<JoinRoomParameter>
+{
+    public override bool CheckParameters(JsonObject? parameters)
     {
-        string RoomName { get; set; }
-        string TokenOrUserId { get; set; }   
+        return JsonValidator.CheckParameters<JoinRoomParameter>(parameters);
     }
 
-    public static class CJoinRoom
+    public override JoinRoomParameter? ParseParameters(JsonObject? parameters)
     {
-        public static async Task<object> JoinRoom(JObject parameters)
+        if (!CheckParameters(parameters)) return null;
+        return new JoinRoomParameter(
+            (string)parameters!["RoomName"]!,
+            (string)parameters!["TokenOrUserId"]!);
+    }
+
+    public async override Task<object> ExecuteInternal(JoinRoomParameter? parameters)
+    {
+        if (Bragi.Instance!.State != BRAGISTATE.INITIALIZED) throw new CommandException((int)JoinRoomError.BRAGI_INITIALIZATION_ERROR, "Bragi not initialized");
+        Room? room = await Bragi.Instance.JoinRoom(parameters!.RoomName, parameters!.TokenOrUserId);
+        if (room == null) throw new CommandException((int)JoinRoomError.ROOM_JOIN_FAILURE, "Failed joining Room");
+        return new Dictionary<string, object>()
         {
-            if (!JsonValidator.CheckParameters<JoinRoomParameters>(parameters)) return "";
-            if (Bragi.Instance.State != BRAGISTATE.INITIALIZED) throw new CommandException((int)JoinRoomError.BRAGI_INITIALIZATION_ERROR, "Bragi not initialized");
-            Room room = await Bragi.Instance.JoinRoom((string)parameters.GetValue("RoomName"), (string)parameters.GetValue("TokenOrUserId"));
-            if (room == null) throw new CommandException((int)JoinRoomError.ROOM_JOIN_FAILURE, "Failed joining Room");
-            return new Dictionary<string, object>()
-            {
-                ["ID"] = room.RoomId,
-                ["Peers"] = room.GetRemotePeersIds(false),
-                ["Self"] = room.Self,
-                ["Config"] = room.Config
-            };
-        }
+            ["Id"] = room.RoomId,
+            ["Peers"] = room.GetRemotePeersIds(false),
+            ["Self"] = await OdinParser.ParsePeer(room.Self),
+            ["Config"] = room.Config
+        };
     }
 }

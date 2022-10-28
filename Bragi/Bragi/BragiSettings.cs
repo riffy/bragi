@@ -1,95 +1,82 @@
-﻿using NAudio.CoreAudioApi;
+﻿using Avalonia.Input;
+using NAudio.CoreAudioApi;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace BRAGI.Bragi
+namespace BRAGI.Bragi;
+
+public class BragiSettings
 {
-    public class BragiSettings : INotifyPropertyChanged
+
+    /// <summary>
+    /// Devices
+    /// </summary>
+    private MMDevice? _outputDevice;
+    public MMDevice? OutputDevice
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        get { return _outputDevice; }
+        set { 
+            _outputDevice = value;
+        }
+    }
+    private MMDevice? _inputDevice;
 
-        /// <summary>
-        /// Devices
-        /// </summary>
-        private MMDevice _outputDevice;
-        public MMDevice OutputDevice
-        {
-            get { return _outputDevice; }
-            set { 
-                _outputDevice = value;
-                OnPropertyChanged();
-            }
+    public MMDevice? InputDevice
+    {
+        get { return _inputDevice; }
+        set { 
+            _inputDevice = value;
         }
-        private MMDevice _inputDevice;
+    }
+    /// <summary>
+    /// Push To Talk
+    /// </summary>
+    public static Key defaultP2TKey = Key.None;
 
-        public MMDevice InputDevice
+    private Key _p2tKey = defaultP2TKey;
+    public Key P2TKey 
+    {
+        get { return _p2tKey; }
+        set
         {
-            get { return _inputDevice; }
-            set { 
-                _inputDevice = value;
-                OnPropertyChanged();
-            }
+            _p2tKey = value;
         }
-        /// <summary>
-        /// Push To Talk
-        /// </summary>
-        private Key _pushToTalkHotkey = Key.None;
-        public Key PushToTalkHotkey 
+    }
+    public string PushToTalkInfo
+    {
+        get
         {
-            get { return _pushToTalkHotkey; }
-            set
-            {
-                _pushToTalkHotkey = value;
-                OnPropertyChanged();
-            }
+            if (!UseP2T) return "Inactive";
+            if (P2TKey == Key.None) return "Unset";
+            return P2TKey.ToString();
         }
-        public string PushToTalkInfo
+    }
+    public bool UseP2T
+    {
+        get
         {
-            get
-            {
-                if (!UsePushToTalk) return "Inactive";
-                if (PushToTalkHotkey == Key.None) return "Unset";
-                return PushToTalkHotkey.ToString();
-            }
+            return (_p2tKey != Key.None);
         }
-        public bool UsePushToTalk
-        {
-            get
-            {
-                return (_pushToTalkHotkey != Key.None);
-            }
-        }
+    }
 
-        private int _volume = 100;
-        public int Volume
-        {
-            get { return _volume; }
-            set {
-                _volume = value;
-                OnPropertyChanged();
-            }
-        }
+    public static int defaultVolume = 100;
 
-        public BragiSettings() {}
-
-        public void ApplySettings(MMDevice InputDevice, MMDevice OutputDevice, int Volume = 100, Key PushToTalkHotkey = Key.None)
-        {
-            Console.WriteLine("Applying new Settings {0} , {1}", Volume, PushToTalkHotkey);
-            this.InputDevice = InputDevice;
-            this.OutputDevice = OutputDevice;
-            this.Volume = Volume;
-            this.PushToTalkHotkey = PushToTalkHotkey;
+    private int _volume = defaultVolume;
+    public int Volume
+    {
+        get { return _volume; }
+        set {
+            _volume = value;
         }
+    }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+    public BragiSettings() {}
+
+    public void ApplySettings(MMDevice InputDevice, MMDevice OutputDevice, int Volume = 100, Key PushToTalkHotkey = Key.None)
+    {
+        Console.WriteLine("Applying new Settings {0} , {1}", Volume, PushToTalkHotkey);
+        this.InputDevice = InputDevice;
+        this.OutputDevice = OutputDevice;
+        this.Volume = Volume;
+        this.P2TKey = PushToTalkHotkey;
     }
 }

@@ -26,11 +26,11 @@ namespace OdinNative.Odin.Peer
         /// </summary>
         /// <param name="key">Peer Id</param>
         /// <returns>Peer or null</returns>
-        public Peer this[ulong key]
+        public Peer? this[ulong key]
         {
             get
             {
-                if (_Peers != null && _Peers.TryGetValue(key, out Peer peer))
+                if (_Peers != null && _Peers.TryGetValue(key, out Peer? peer))
                     return peer;
 
                 return null;
@@ -109,9 +109,9 @@ namespace OdinNative.Odin.Peer
         /// <param name="x">peer</param>
         /// <param name="y">peer</param>
         /// <returns>true if equal or false</returns>
-        public bool Equals(Peer x, Peer y)
+        public bool Equals(Peer? x, Peer? y)
         {
-            return x.Id == y.Id;
+            return x!.Id == y!.Id;
         }
 
         /// <summary>
@@ -164,8 +164,8 @@ namespace OdinNative.Odin.Peer
 
         internal bool Free(ulong id)
         {
-            bool result = _Peers.TryRemove(id, out Peer peer);
-            if (result) peer.Dispose();
+            bool result = _Peers.TryRemove(id, out Peer? peer);
+            if (result) peer!.Dispose();
             return result;
         }
 

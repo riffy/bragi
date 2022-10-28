@@ -1,14 +1,24 @@
-﻿using BRAGI.Util;
-using Newtonsoft.Json.Linq;
+﻿using BRAGI.Bragi;
+using BRAGI.Util;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace Bragi.Bragi.Commands
+namespace Bragi.Bragi.Commands;
+
+public class GetAudioDevices : BragiCommand<NoParameter>
 {
-    public static class CGetAudioDevices
+    public override bool CheckParameters(JsonObject? param)
     {
-        public static async Task<object> GetAudioDevices(JObject parameters)
-        {
-            return await Audio.GetAudioDevices();
-        }
+        return true;
+    }
+
+    public async override Task<object> ExecuteInternal(NoParameter? param)
+    {
+        return await Audio.GetAudioDevices();
+    }
+
+    public override NoParameter? ParseParameters(JsonObject? param)
+    {
+        return null;
     }
 }

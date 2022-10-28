@@ -29,20 +29,20 @@ namespace OdinNative.Odin.Room
         /// </summary>
         /// <param name="key">Room name</param>
         /// <returns>Room or null</returns>
-        public Room this[string key]
+        public Room? this[string key]
         {
             get
             {
                 if (string.IsNullOrEmpty(key)) return null;
 
-                if (_Rooms != null && _Rooms.TryGetValue(key, out Room room))
+                if (_Rooms != null && _Rooms.TryGetValue(key, out Room? room))
                     return room;
 
                 return null;
             }
         }
 
-        internal Room this[IntPtr handle]
+        internal Room? this[IntPtr handle]
         {
             get
             {
@@ -127,9 +127,9 @@ namespace OdinNative.Odin.Room
         /// <param name="x">room</param>
         /// <param name="y">room</param>
         /// <returns>is equal</returns>
-        public bool Equals(Room x, Room y)
+        public bool Equals(Room? x, Room? y)
         {
-            return x.Config.Name == y.Config.Name;
+            return x!.Config.Name == y!.Config.Name;
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace OdinNative.Odin.Room
         /// <param name="key">room name</param>
         public void Leave(string key)
         {
-            if(_Rooms.TryGetValue(key, out Room room))
+            if(_Rooms.TryGetValue(key, out Room? room))
                 room.Leave();
         }
 
@@ -194,8 +194,8 @@ namespace OdinNative.Odin.Room
         /// <returns>is removed</returns>
         internal bool Free(string key)
         {
-            bool result = _Rooms.TryRemove(key, out Room room);
-            if (result) room.Dispose();
+            bool result = _Rooms.TryRemove(key, out Room? room);
+            if (result) room!.Dispose();
             return result;
         }
 
