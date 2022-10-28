@@ -83,81 +83,6 @@ public class Bragi
     }
 
     /// <summary>
-    /// Joins a room by the provided information. If the access key is set, the second parameter is interpreted as the token.
-    /// </summary>
-    /// <param name="roomName"></param>
-    /// <param name="tokenOrUserID"></param>
-    /// <returns></returns>
-    public async Task<Room?> JoinRoom(string roomName, string tokenOrUserID)
-    {
-        Room? room = null;
-        if (Client == null) return null;
-        if (string.IsNullOrEmpty(Client.AccessKey))
-        {
-            Console.WriteLine("Joining Room {0} by Token {1}", roomName, tokenOrUserID);
-            room = await Client.JoinNamedRoom(roomName, tokenOrUserID);
-        }
-        else
-        {
-            Console.WriteLine("Joining Room {0} with UserID {1} using AccessKey", roomName, tokenOrUserID);
-            room = await Client.JoinRoom(roomName, tokenOrUserID);
-        }
-        if (room != null) RegisterRoomEvents(room);
-        return room;
-    }
-
-    /// <summary>
-    /// Registers the Room events for a given room.
-    /// </summary>
-    /// <param name="room"></param>
-    internal void RegisterRoomEvents(Room room)
-    {
-        room.OnConnectionStateChanged += Room_OnConnectionStateChanged;
-        room.OnMediaActiveStateChanged += Room_OnMediaActiveStateChanged;
-        room.OnPeerJoined += Room_OnPeerJoined;
-        room.OnPeerLeft += Room_OnPeerLeft;
-    }
-
-    private void Room_OnPeerLeft(object sender, PeerLeftEventArgs e)
-    {
-        Console.WriteLine("Room_OnPeerLeft:");
-        Console.WriteLine(sender);
-        Console.WriteLine(e);
-    }
-
-    private void Room_OnPeerJoined(object sender, PeerJoinedEventArgs e)
-    {
-        Console.WriteLine("Room_OnPeerJoined:");
-        Console.WriteLine(sender);
-        Console.WriteLine(e);
-    }
-
-    private void Room_OnMediaActiveStateChanged(object sender, MediaActiveStateChangedEventArgs e)
-    {
-        Console.WriteLine("Room_OnMediaActiveStateChanged:");
-        Console.WriteLine(sender);
-        Console.WriteLine(e);
-    }
-
-    private void Room_OnConnectionStateChanged(object sender, ConnectionStateChangedEventArgs e)
-    {
-        Console.WriteLine("Room_OnConnectionStateChanged:");
-        Console.WriteLine(sender);
-        Console.WriteLine(e);
-    }
-
-    /// <summary>
-    /// Leaves a room by the given name.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns>True on success, False on fail</returns>
-    public async Task<bool> LeaveRoom(string name)
-    {
-        if (Client == null) return false;
-        return await Client.LeaveRoom(name);
-    }
-
-    /// <summary>
     /// Performs a Cleanup sequence.
     /// Leaves all rooms the current ODIN client is connected.
     /// </summary>
@@ -171,7 +96,6 @@ public class Bragi
         State = BRAGISTATE.NOT_INITIALIZED;
         Client = null;
     }
-
     public BragiState GetState()
     {
         return new BragiState()

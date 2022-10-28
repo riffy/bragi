@@ -57,18 +57,10 @@ public class Valhalla
                 State = value ? VALHALLASTATE.RUNNING_CLIENT_CONNECTED : VALHALLASTATE.RUNNING;
             }
             _heroArrived = value;
-            if (value)
-            {
-                /* TODO
-                HeroArrivedTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",
-                    CultureInfo.InvariantCulture);
-                */
-            }
         }
     }
 
     public Bragi.Bragi Bragi { get; private set; }
-    public DateTime LastMessageReceived { get; set; }
 
 
     /// <summary>
@@ -152,6 +144,20 @@ public class Valhalla
         {
             Server.Stop();
             Console.WriteLine("Valhalla stopped");
+        }
+    }
+
+    /// <summary>
+    /// Broadcasts a specific message on the websocket server.
+    /// </summary>
+    /// <param name="message"></param>
+    public static async void Broadcast(string message)
+    {
+        if (Instance != null && Instance.Server != null && Instance.HeroArrived)
+        {
+            Console.WriteLine("--- Broadcast ---");
+            Console.WriteLine(message);
+            Instance.Server.WebSocketServices.Broadcast(message);
         }
     }
 }

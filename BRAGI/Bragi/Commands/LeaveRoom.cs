@@ -27,7 +27,7 @@ public class LeaveRoom : BragiCommand<LeaveRoomParameter>
     public async override Task<object> ExecuteInternal(LeaveRoomParameter? parameters)
     {
         if (Bragi.Instance!.State != BRAGISTATE.INITIALIZED) throw new CommandException((int)LeaveRoomError.BRAGI_INITIALIZATION_ERROR, "Bragi not initialized");
-        return await Bragi.Instance.LeaveRoom(parameters!.RoomName);
+        return await BragiRoom.BragiRoom.LeaveRoom(parameters!.RoomName);
     }
 
     public override LeaveRoomParameter? ParseParameters(JsonObject? parameters)

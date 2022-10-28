@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Text.Json;
+using BRAGI.Bragi.BragiRoom;
 
 namespace BRAGI.Bragi.Commands;
 
@@ -42,13 +43,13 @@ public class JoinRoom : BragiCommand<JoinRoomParameter>
     public async override Task<object> ExecuteInternal(JoinRoomParameter? parameters)
     {
         if (Bragi.Instance!.State != BRAGISTATE.INITIALIZED) throw new CommandException((int)JoinRoomError.BRAGI_INITIALIZATION_ERROR, "Bragi not initialized");
-        Room? room = await Bragi.Instance.JoinRoom(parameters!.RoomName, parameters!.TokenOrUserId);
-        if (room == null) throw new CommandException((int)JoinRoomError.ROOM_JOIN_FAILURE, "Failed joining Room");
-        return new Dictionary<string, object>()
+        BragiRoom.BragiRoom? br = await BragiRoom.BragiRoom.JoinRoom(parameters!.RoomName, parameters!.TokenOrUserId);
+        if (br == null) throw new CommandException((int)JoinRoomError.ROOM_JOIN_FAILURE, "Failed joining Room");
+        return new Dictionary<string, object?>()
         {
-            ["Id"] = room.RoomId,
-            ["Peers"] = room.GetRemotePeersIds(false),
-            ["Self"] = await OdinParser.ParsePeer(room.Self)
+            ["Id"] = br.Room.RoomId,
+            ["Peers"] = br.Room.GetRemotePeersIds(false),
+            ["Self"] = await OdinParser.ParsePeer(br.Room.Self)
         };
     }
 }

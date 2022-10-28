@@ -35,7 +35,6 @@
    </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\Images\" />
-    <Folder Include="Bragi\" />
     <Folder Include="Valhalla\" />
   </ItemGroup>
   <ItemGroup>

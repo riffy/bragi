@@ -10,9 +10,14 @@ namespace BRAGI.Util;
 public class ControlWriter : TextWriter
 {
     private readonly TextBox textbox;
+    private readonly StringBuilder logStringBuilder;
     public ControlWriter(TextBox textbox)
     {
         this.textbox = textbox;
+#if DEBUG
+        logStringBuilder = new StringBuilder();
+        Console.WriteLine("Mode=Debug");
+#endif
     }
 
     public override void Write(string? value)
@@ -29,26 +34,16 @@ public class ControlWriter : TextWriter
     {
         string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff",
                 CultureInfo.InvariantCulture);
+        string text = "[" + timestamp + "]: " + value + "\r\n";
         Dispatcher.UIThread.InvokeAsync(delegate
         {
-            textbox.Text += "[" + timestamp + "]: " + value + "\r\n";
+            textbox.Text += text;
             textbox.Focus();
             textbox.CaretIndex = textbox.Text.Length;
         });
-        /*
-        textbox.Text += "[" + timestamp + "]: " + value + "\r\n";
-        textbox.Focus();
-        textbox.CaretIndex = textbox.Text.Length;
-        */
-        /*
-        textbox.Invoke(delegate
-        {
-            textbox.AppendText("[" + timestamp + "]: " + value + "\r\n");
-            textbox.Focus();
-            textbox.CaretIndex = textbox.Text.Length;
-            textbox.ScrollToEnd();
-        });
-        */
+#if DEBUG
+        LogWriter log = new(text);
+#endif
     }
 
     public override Encoding Encoding
