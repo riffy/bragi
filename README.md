@@ -45,12 +45,12 @@ Name | Progress | Description
 
 ## ODIN
 
-Basics: ![](https://geps.dev/progress/1)
+Basics: ![](https://geps.dev/progress/50)
 Name | Progress | Description
 ------------- | ------------- | -------------
-`Event Broadcast` | ![](https://geps.dev/progress/0) | Broadcast all ODIN Events to the websocket
-`Room Methods` | ![](https://geps.dev/progress/5) | Wrap room methods in commands
-`Peer Methods` | ![](https://geps.dev/progress/1) | Wrap peer methods in commands 
+`Event Broadcast` | ![](https://geps.dev/progress/85) | Broadcast all ODIN Events to the websocket
+`Room Methods` | ![](https://geps.dev/progress/25) | Wrap room methods in commands
+`Peer Methods` | ![](https://geps.dev/progress/10) | Wrap peer methods in commands 
 
 ## Audio
 
