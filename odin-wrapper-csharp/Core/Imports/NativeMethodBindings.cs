@@ -406,11 +406,11 @@ namespace OdinNative.Core.Imports
         /// <param name="callback">extern "C" fn(event: *const <see cref="OdinNative.Core.Imports.NativeBindings.OdinEvent"/>) -> ()</param>
         /// <param name="extra_data">custom ref object</param>
         /// <returns>0 or error code that is readable with <see cref="ErrorFormat"/></returns>
-        public uint RoomSetEventCallback(RoomHandle room, OdinEventCallback callback, MarshalByRefObject extra_data = null)
+        public uint RoomSetEventCallback(RoomHandle room, OdinEventCallback callback, MarshalByRefObject? extra_data = null)
         {
             using (Lock)
             {
-                uint error = _OdinRoomSetEventCallback(room, callback, extra_data);
+                uint error = _OdinRoomSetEventCallback(room, callback, extra_data!);
                 CheckAndThrow(error);
                 return error;
             }

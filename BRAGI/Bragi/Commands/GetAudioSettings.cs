@@ -23,10 +23,11 @@ public class GetAudioSettings : BragiCommand<NoParameter>
         if (Bragi.Instance!.State != BRAGISTATE.INITIALIZED) throw new CommandException((int)GetAudioError.BRAGI_INITIALIZATION_ERROR, "Bragi not initialized");
         Dictionary<string, object?> result = new()
         {
-            ["In"] = Audio.SimplifyMMDevice(Bragi.Instance.Settings.InputDevice),
-            ["Out"] = Audio.SimplifyMMDevice(Bragi.Instance.Settings.OutputDevice),
-            ["Volume"] = Bragi.Instance.Settings.Volume,
-            ["PushToTalkKey"] = Bragi.Instance.Settings.P2TKey
+            ["In"] = Audio.SimplifyMMDevice(BragiAudio.InputDevice),
+            ["Out"] = Audio.SimplifyMMDevice(BragiAudio.OutputDevice),
+            ["Volume"] = BragiAudio.Volume,
+            ["PushToTalkKey"] = BragiAudio.P2TKey,
+            ["InputGain"] = BragiAudio.InputGain
         };
         return result;
     }

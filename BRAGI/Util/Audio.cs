@@ -1,9 +1,5 @@
 ﻿using NAudio.CoreAudioApi;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using BRAGI.Bragi;
 
@@ -11,6 +7,22 @@ namespace BRAGI.Util;
 
 public static class Audio
 {
+    public static IEnumerable<MMDevice> ActiveCaptureDevices
+    {
+        get
+        {
+            MMDeviceEnumerator enumerator = new();
+            List<MMDevice> devices = new List<MMDevice>();
+            foreach (var endpoint in
+                 enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active))
+            {
+                devices.Add(endpoint);
+            }
+            enumerator.Dispose();
+            return devices;
+        }
+    }
+
     /// <summary>
     /// Returns the sound devices connected in a dictionary with an ID (string) and their name.
     /// in: List of Soundinputs (micrphone)
@@ -81,7 +93,6 @@ public static class Audio
             Name = device.DeviceFriendlyName
         };
     }
-
 }
 
 public class SimplifiedAudioDevice

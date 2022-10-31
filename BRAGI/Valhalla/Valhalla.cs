@@ -149,6 +149,7 @@ public class Valhalla
 
     /// <summary>
     /// Broadcasts a specific message on the websocket server.
+    /// Broadcast is only performed if a client is connected
     /// </summary>
     /// <param name="message"></param>
     public static async void Broadcast(string message)

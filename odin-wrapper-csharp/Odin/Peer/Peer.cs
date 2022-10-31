@@ -23,7 +23,7 @@ namespace OdinNative.Odin.Peer
         /// <summary>
         /// Peers user id
         /// </summary>
-        public string UserId { get; internal set; }
+        public string? UserId { get; internal set; }
         /// <summary>
         /// Peer userdata
         /// </summary>

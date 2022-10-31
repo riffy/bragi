@@ -7,27 +7,123 @@
         Title="BRAGI" Height="450" Width="500"
 		CanResize="False"
 		Closing="Window_Closing">
-	<TabControl>
-		<TabItem Header="Valhalla">
-			<Grid>
+	<TabControl
+		x:Name="Tabs"
+		>
+		<TabItem
+			x:Name="WaitingTab"
+			IsVisible="{Binding !BragiLoaded}"
+			Header="Bragi">
+			<Grid
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="1*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+				<TextBlock Text="No Client connected and/or initialization missing..."/>
+			</Grid>
+		</TabItem>
+		<TabItem
+			x:Name="BragiTab"
+			IsVisible="{Binding BragiLoaded}"
+			Header="Bragi">
+			<Grid
+				ShowGridLines="True">
+				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="1*"/>
-					<ColumnDefinition Width="1*"/>
-					<ColumnDefinition Width="1*"/>
+					<ColumnDefinition Width="2*"/>
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="1*"/>
 					<RowDefinition Height="1*"/>
 					<RowDefinition Height="1*"/>
 					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
 				</Grid.RowDefinitions>
-				<!-- 1st Row -->
+				<!-- Output Device-->
+				<TextBlock
+					HorizontalAlignment="Center"
+					Text="Output Device"
+					Grid.Column="0"
+					Grid.Row="0"/>
+				<ComboBox
+					Grid.Column="1"
+					Grid.Row="0"
+					Name="OutputDeviceSelector"
+					SelectedItem="{Binding InputDevice, Mode=TwoWay}">
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding DeviceFriendlyName}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<!--
+				<TextBlock
+					HorizontalAlignment="Left"
+					Text="{Binding OutputDevice.DeviceFriendlyName}"
+					Grid.Column="1"
+					Grid.Row="0"/>
+				-->
+				<TextBlock
+					HorizontalAlignment="Center"
+					Text="Output Volume"
+					Grid.Column="0"
+					Grid.Row="1"/>
+				<Slider
+					IsEnabled="False"
+					Grid.Column="1"
+					Grid.Row="1"
+					HorizontalAlignment="Left"
+					Minimum="0" Maximum="100"
+					Value="{Binding Volume}"
+					/>
+				<!-- Input Device-->
+				<TextBlock
+					HorizontalAlignment="Center"
+					Text="Input Device"
+					Grid.Column="0"
+					Grid.Row="2"/>
+				<TextBlock
+					HorizontalAlignment="Left"
+					Text="{Binding InputDevice.DeviceFriendlyName}"
+					Grid.Column="1"
+					Grid.Row="2"/>
+				<TextBlock
+					HorizontalAlignment="Center"
+					Text="Input Gain"
+					Grid.Column="0"
+					Grid.Row="3"/>
+				<Slider
+					IsEnabled="False"
+					Grid.Column="1"
+					Grid.Row="3"
+					HorizontalAlignment="Left"
+					Minimum="0" Maximum="100"
+					Value="{Binding InputGain}"
+					/>
+				<TextBlock
+					HorizontalAlignment="Center"
+					Text="Input Gate"
+					Grid.Column="0"
+					Grid.Row="4"/>
+				<Slider
+					IsEnabled="False"
+					Grid.Column="1"
+					Grid.Row="4"
+					HorizontalAlignment="Left"
+					Minimum="0" Maximum="100"
+					Value="{Binding InputGate}"
+					/>
 			</Grid>
 		</TabItem>
-		<TabItem Header="Bragi"></TabItem>
+		<!--
 		<TabItem Header="Odin"></TabItem>
 		<TabItem Header="Info"></TabItem>
+		-->
 		<TabItem Header="Log">
 			<StackPanel>
 				<TextBox

@@ -77,7 +77,7 @@ namespace OdinNative.Odin
         /// Odin UserData with default encoding UTF8
         /// </summary>
         /// <param name="data">raw representation</param>
-        public UserData(byte[] data) : this(data, null) { }
+        public UserData(byte[] data) : this(data, null!) { }
         /// <summary>
         /// Odin UserData with custom encoding
         /// </summary>

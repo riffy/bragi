@@ -15,7 +15,7 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// room object
         /// </summary>
-        public Room Room;
+        public Room? Room;
     }
 
     /// <summary>
@@ -26,7 +26,7 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// room object
         /// </summary>
-        public Room Room;
+        public Room? Room;
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// room object
         /// </summary>
-        public Room Room;
+        public Room? Room;
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// room name
         /// </summary>
-        public string RoomName;
+        public string? RoomName;
     }
 
     /// <summary>
@@ -63,11 +63,11 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// user Id
         /// </summary>
-        public string UserId { get; internal set; }
+        public string? UserId { get; internal set; }
         /// <summary>
         /// peer object
         /// </summary>
-        public Peer.Peer Peer;
+        public Peer.Peer? Peer;
     }
     /// <summary>
     /// EventHandler in the current room
@@ -105,11 +105,11 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// peer object
         /// </summary>
-        public Peer.Peer Peer;
+        public Peer.Peer? Peer;
         /// <summary>
         /// peer userdata
         /// </summary>
-        public UserData UserData;
+        public UserData? UserData;
     }
     /// <summary>
     /// EventHandler in the current room
@@ -130,11 +130,11 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// peer object
         /// </summary>
-        public Peer.Peer Peer;
+        public Peer.Peer? Peer;
         /// <summary>
         /// <see cref="OdinNative.Odin.Media.MediaStream"/> with <see cref="OdinNative.Odin.Media.IAudioStream"/>
         /// </summary>
-        public PlaybackStream Media;
+        public PlaybackStream? Media;
     }
     /// <summary>
     /// EventHandler in the current room
@@ -155,7 +155,7 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// peer object
         /// </summary>
-        public Peer.Peer Peer;
+        public Peer.Peer? Peer;
     }
     /// <summary>
     /// EventHandler in the current room
@@ -197,11 +197,11 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// room name
         /// </summary>
-        public string RoomName { get; internal set; }
+        public string? RoomName { get; internal set; }
         /// <summary>
         /// room userdata
         /// </summary>
-        public UserData Data;
+        public UserData? Data;
     }
     /// <summary>
     /// EventHandler in the current room
@@ -223,7 +223,7 @@ namespace OdinNative.Odin.Room
         /// <summary>
         /// arbitrary data
         /// </summary>
-        public byte[] Data;
+        public byte[]? Data;
     }
     /// <summary>
     /// EventHandler in the current room

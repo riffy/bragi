@@ -27,7 +27,7 @@ namespace OdinNative.Odin.Media
         /// <summary>
         /// Audio config of the media stream
         /// </summary>
-        public OdinMediaConfig MediaConfig { get; private set; }
+        public OdinMediaConfig? MediaConfig { get; private set; }
         /// <summary>
         /// Control of async read and write tasks
         /// </summary>
@@ -54,8 +54,8 @@ namespace OdinNative.Odin.Media
         /// Indicates wether or not the media stream handle is invalid or closed
         /// </summary>
         public bool IsInvalid { get { return Handle == null || Handle.IsInvalid || Handle.IsClosed; } }
-        private StreamHandle Handle;
-        private ResamplerHandle ResamplerHandle;
+        private StreamHandle? Handle;
+        private ResamplerHandle? ResamplerHandle;
 
         /// <summary>
         /// Base stream
@@ -79,7 +79,7 @@ namespace OdinNative.Odin.Media
         /// <returns>id value</returns>
         public ushort GetMediaId()
         {
-            uint result = OdinLibrary.Api.MediaStreamMediaId(Handle, out ushort mediaId);
+            uint result = OdinLibrary.Api.MediaStreamMediaId(Handle!, out ushort mediaId);
             if(Utility.IsError(result)) HasErrors = true;
             return mediaId;
         }
@@ -90,7 +90,7 @@ namespace OdinNative.Odin.Media
         /// <returns>id</returns>
         public ulong GetPeerId()
         {
-            uint result = OdinLibrary.Api.MediaStreamPeerId(Handle, out ulong peerId);
+            uint result = OdinLibrary.Api.MediaStreamPeerId(Handle!, out ulong peerId);
             HasErrors = Utility.IsError(result);
             return peerId;
         }
@@ -136,7 +136,7 @@ namespace OdinNative.Odin.Media
         /// <returns>true on success or false</returns>
         internal bool AddMediaToRoom(RoomHandle roomHandle)
         {
-            uint result = OdinLibrary.Api.RoomAddMedia(roomHandle, Handle);
+            uint result = OdinLibrary.Api.RoomAddMedia(roomHandle, Handle!);
             HasErrors = Utility.IsError(result);
             return result == Utility.OK;
         }
@@ -150,7 +150,7 @@ namespace OdinNative.Odin.Media
         {
             if (IsPaused) return;
             if (IsMuted) Array.Clear(buffer, 0, buffer.Length);
-            OdinLibrary.Api.AudioPushData(Handle, buffer, buffer.Length);
+            OdinLibrary.Api.AudioPushData(Handle!, buffer, buffer.Length);
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace OdinNative.Odin.Media
         {
             if (IsPaused) return;
             if (IsMuted) Array.Clear(buffer, 0, buffer.Length);
-            OdinLibrary.Api.AudioPushData(Handle, buffer, length);
+            OdinLibrary.Api.AudioPushData(Handle!, buffer, length);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace OdinNative.Odin.Media
 
             return Task.Factory.StartNew(() => {
                 if (IsMuted) Array.Clear(buffer, 0, buffer.Length);
-                OdinLibrary.Api.AudioPushData(Handle, buffer, buffer.Length);
+                OdinLibrary.Api.AudioPushData(Handle!, buffer, buffer.Length);
             }, cancellationToken);
         }
 
@@ -215,7 +215,7 @@ namespace OdinNative.Odin.Media
         {
             if (IsPaused) return 0;
 
-            uint result = OdinLibrary.Api.AudioReadData(Handle, buffer, length);
+            uint result = OdinLibrary.Api.AudioReadData(Handle!, buffer, length);
             if (IsMuted) Array.Clear(buffer, 0, buffer.Length);
             HasErrors = Utility.IsError(result);
             return result;
@@ -233,7 +233,7 @@ namespace OdinNative.Odin.Media
             if (IsPaused) return Task.FromResult<uint>(0);
 
             return Task.Factory.StartNew(() => {
-                 uint result = OdinLibrary.Api.AudioReadData(Handle, buffer, buffer.Length);
+                 uint result = OdinLibrary.Api.AudioReadData(Handle!, buffer, buffer.Length);
                  if (IsMuted) Array.Clear(buffer, 0, buffer.Length);
                  HasErrors = Utility.IsError(result);
                 return result;
@@ -256,7 +256,7 @@ namespace OdinNative.Odin.Media
         /// <returns>floats available to read with <see cref="AudioReadData(float[])"/></returns>
         public virtual uint AudioDataLength()
         {
-            uint result = OdinLibrary.Api.AudioDataLength(Handle);
+            uint result = OdinLibrary.Api.AudioDataLength(Handle!);
             HasErrors = Utility.IsError(result);
             return result;
         }

@@ -15,8 +15,8 @@ namespace OdinNative.Core
     /// </summary>
     public static class OdinLibrary
     {
-        private static OdinHandle Handle;
-        private static NativeMethods NativeMethods;
+        private static OdinHandle? Handle;
+        private static NativeMethods? NativeMethods;
         private static ReaderWriterLock InitializedLock = new ReaderWriterLock();
         private static bool ProcessExitRegistered = false;
 
@@ -144,7 +144,7 @@ namespace OdinNative.Core
                 Release();
         }
 
-        internal static Exception CreateException(uint error, string extraMessage = null)
+        internal static Exception CreateException(uint error, string? extraMessage = null)
         {
             string message = Api.GetErrorMessage(error);
             OdinException result = new OdinException(error, message);

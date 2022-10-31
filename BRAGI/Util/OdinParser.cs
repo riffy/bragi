@@ -9,7 +9,12 @@ namespace BRAGI.Util;
 
 public static class OdinParser
 {
-    public static async Task<object?> ParsePeer(Peer p)
+    /// <summary>
+    /// Parses a given peer to a simplified version.
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static async Task<object?> ParsePeer(Peer? p)
     {
         if (p == null) return null;
         Dictionary<string, object> result = new()

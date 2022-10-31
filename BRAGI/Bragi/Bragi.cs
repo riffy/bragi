@@ -26,6 +26,7 @@ public enum BRAGISTATE
 
 public class Bragi
 {
+    public static event EventHandler? StateChanged;
 
     /// <summary>
     /// Refers to the current state of Bragi.
@@ -42,24 +43,13 @@ public class Bragi
         set
         {
             _state = value;
+            if (StateChanged != null) StateChanged.Invoke(this, null!);
         }
     }
     /// <summary>
     /// The currently running Bragi Instance
     /// </summary>
     public static Bragi? Instance { get; private set; }
-    /// <summary>
-    /// Settings for Bragi, the audio output etc.
-    /// </summary>
-    private BragiSettings _settings = new BragiSettings();
-    public BragiSettings Settings
-    {
-        get { return _settings; }
-        set
-        {
-            _settings = value;
-        }
-    }
 
     /// <summary>
     /// The acutal ODIN client
@@ -88,20 +78,9 @@ public class Bragi
     /// </summary>
     public void CleanUp()
     {
-        if (State == BRAGISTATE.INITIALIZED &&
-            Client != null)
-        {
-            Client.Rooms.FreeAll();
-        }
+        BragiRoom.BragiRoom.CleanUp();
         State = BRAGISTATE.NOT_INITIALIZED;
         Client = null;
-    }
-    public BragiState GetState()
-    {
-        return new BragiState()
-        {
-            State = State
-        };
     }
 }
 

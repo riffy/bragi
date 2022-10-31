@@ -73,7 +73,7 @@ namespace OdinNative.Core.Platform
 #endif
         }
 
-        public static void LoadDynamicLibrary(SupportedPlatform platform, string[] possibleNames, out IntPtr handle, out string location)
+        public static void LoadDynamicLibrary(SupportedPlatform platform, string[] possibleNames, out IntPtr handle, out string? location)
         {
             foreach (string possibleName in possibleNames)
             {
@@ -93,7 +93,7 @@ namespace OdinNative.Core.Platform
                 default: throw new NotSupportedException();
             }
         }
-        private static bool LoadDynamicLibrary(SupportedPlatform platform, string name, out IntPtr handle, out string location)
+        private static bool LoadDynamicLibrary(SupportedPlatform platform, string name, out IntPtr handle, out string? location)
         {
             switch (platform)
             {

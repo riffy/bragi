@@ -18,6 +18,8 @@ public class JoinRoomParameter : BragiParameter
 {
     public string RoomName { get; private set; }
     public string TokenOrUserId { get; private set; }
+    [OptionalParameter]
+
     public JoinRoomParameter(string roomName, string tokenOrUserId)
     {
         RoomName = roomName;
@@ -44,7 +46,7 @@ public class JoinRoom : BragiCommand<JoinRoomParameter>
     {
         if (Bragi.Instance!.State != BRAGISTATE.INITIALIZED) throw new CommandException((int)JoinRoomError.BRAGI_INITIALIZATION_ERROR, "Bragi not initialized");
         BragiRoom.BragiRoom? br = await BragiRoom.BragiRoom.JoinRoom(parameters!.RoomName, parameters!.TokenOrUserId);
-        if (br == null) throw new CommandException((int)JoinRoomError.ROOM_JOIN_FAILURE, "Failed joining Room");
+        if (br == null || br.Room == null) throw new CommandException((int)JoinRoomError.ROOM_JOIN_FAILURE, "Failed joining Room");
         return new Dictionary<string, object?>()
         {
             ["Id"] = br.Room.RoomId,

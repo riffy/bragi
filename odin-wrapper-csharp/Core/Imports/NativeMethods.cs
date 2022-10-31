@@ -81,11 +81,11 @@ namespace OdinNative.Core.Imports
             get { return new LockObject(Handle); }
         }
 
-        private void CheckAndThrow(uint error, string message = null)
+        private void CheckAndThrow(uint error, string? message = null)
         {
             if (Check(error))
 #pragma warning disable CS0618 // Type or member is obsolete
-                Utility.Throw(OdinLibrary.CreateException(error, message));
+                Utility.Throw(OdinLibrary.CreateException(error, message!));
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 

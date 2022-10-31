@@ -26,7 +26,7 @@ public class LogWriter
                 Log(logMessage, w);
             }
         }
-        catch (Exception ex)
+        catch
         {
         }
     }
@@ -37,7 +37,7 @@ public class LogWriter
         {
             txtWriter.Write("{0}", logMessage);
         }
-        catch (Exception ex)
+        catch
         {
         }
     }

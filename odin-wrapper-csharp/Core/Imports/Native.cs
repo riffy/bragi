@@ -14,7 +14,7 @@ namespace OdinNative.Core.Imports
         public static readonly Encoding Encoding = Encoding.UTF8;
         public static readonly int SizeOfPointer = Marshal.SizeOf(typeof(IntPtr));
 
-        public static string ReadByteString(IntPtr pointer)
+        public static string? ReadByteString(IntPtr pointer)
         {
             if (pointer == IntPtr.Zero) return null;
             int length = 0;

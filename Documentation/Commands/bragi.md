@@ -46,7 +46,7 @@ interface InitializeCommand {
 ```
 
 Response Data:
-- On Success: `""`
+- On Success: [GetAudioSettings](/Documentation/Commands/audio.md#2---getaudiosettings)
 
 Error Codes:
 Error Code | Description

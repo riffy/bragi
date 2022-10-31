@@ -39,7 +39,7 @@ namespace OdinNative.Core
         /// Creates a new <see cref="OdinLibraryParameters"/>-Object.
         /// </summary>
         public OdinLibraryParameters()
-            : this(null)
+            : this(null!)
         {
         }
 

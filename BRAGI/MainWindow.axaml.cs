@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using BRAGI.UI;
 using BRAGI.Util;
 using BRAGI.Valhalla;
 using System;
@@ -15,6 +16,9 @@ public partial class MainWindow : Window
         Instance = this;
         InitializeComponent();
         Console.SetOut(new ControlWriter(ConsoleBox));
+        MainWindowViewModel mwvm = new();
+        DataContext = mwvm;
+        OutputDeviceSelector.Items = mwvm.CaptureDevices;
         try
         {
             Valhalla.Valhalla v = Valhalla.Valhalla.Start();

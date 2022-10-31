@@ -1,2 +1,2 @@
 # Audio
-The events listed below are directly caused by internally by Bragi. Mostly those are audio and device related things.
+The audio events are events either caused by the implemented client application or due 
