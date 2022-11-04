@@ -2,12 +2,50 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BRAGI.Bragi;
+using System;
+using NAudio.CoreAudioApi.Interfaces;
+using BRAGI.Bragi.Commands;
 
 namespace BRAGI.Util;
 
 public static class Audio
 {
-    public static IEnumerable<MMDevice> ActiveCaptureDevices
+    #region Events
+    private static readonly MMDeviceEnumerator DeviceEnum = new();
+    private static AudioNotification? NotificationClient;
+    public static event EventHandler<string>? OnDeviceAdded;
+    public static event EventHandler<string>? OnDeviceRemoved;
+    public static event EventHandler<DeviceStateChangedArgs>? OnDeviceStateChanged;
+    #endregion
+    public static IEnumerable<MMDevice> ActiveInputDevices
+    {
+        get
+        {
+            MMDeviceEnumerator enumerator = new();
+            List<MMDevice> devices = new List<MMDevice>();
+            foreach (var endpoint in
+                 enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active))
+            {
+                devices.Add(endpoint);
+            }
+            enumerator.Dispose();
+            return devices;
+        }
+    }
+    public static IEnumerable<SimplifiedAudioDevice> SimpleActiveInputDevices
+    {
+        get
+        {
+            List<SimplifiedAudioDevice> devices = new List<SimplifiedAudioDevice>();
+            foreach (MMDevice aid in ActiveInputDevices)
+            {
+                SimplifiedAudioDevice? sad = SimplifyMMDevice(aid);
+                if (sad != null) devices.Add(sad);
+            }
+            return devices;
+        }
+    }
+    public static IEnumerable<MMDevice> ActiveOutputDevices
     {
         get
         {
@@ -22,7 +60,19 @@ public static class Audio
             return devices;
         }
     }
-
+    public static IEnumerable<SimplifiedAudioDevice> SimpleActiveOutputDevices
+    {
+        get
+        {
+            List<SimplifiedAudioDevice> devices = new List<SimplifiedAudioDevice>();
+            foreach (MMDevice aod in ActiveOutputDevices)
+            {
+                SimplifiedAudioDevice? sad = SimplifyMMDevice(aod);
+                if (sad != null) devices.Add(sad);
+            }
+            return devices;
+        }
+    }
     /// <summary>
     /// Returns the sound devices connected in a dictionary with an ID (string) and their name.
     /// in: List of Soundinputs (micrphone)
@@ -31,27 +81,11 @@ public static class Audio
     /// <returns></returns>
     public static async Task<object> GetAudioDevices()
     {
-        Dictionary<string, List<SimplifiedAudioDevice>> result = new()
+        Dictionary<string, IEnumerable<SimplifiedAudioDevice>> result = new()
         {
-            ["In"] = new List<SimplifiedAudioDevice>(),
-            ["Out"] = new List<SimplifiedAudioDevice>()
+            ["In"] = SimpleActiveInputDevices,
+            ["Out"] = SimpleActiveOutputDevices
         };
-        MMDeviceEnumerator enumerator = new();
-        foreach (var endpoint in
-                 enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active))
-        {
-            SimplifiedAudioDevice? res = SimplifyMMDevice(endpoint);
-            if (res != null) result["Out"].Add(res);
-        }
-        enumerator.Dispose();
-        enumerator = new MMDeviceEnumerator();
-        foreach (var endpoint in
-                 enumerator.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active))
-        {
-            SimplifiedAudioDevice? res = SimplifyMMDevice(endpoint);
-            if (res != null) result["In"].Add(res);
-        }
-        enumerator.Dispose();
         return result;
     }
 
@@ -87,18 +121,75 @@ public static class Audio
     public static SimplifiedAudioDevice? SimplifyMMDevice(MMDevice? device)
     {
         if (device == null) return null;
-        return new SimplifiedAudioDevice()
+        return new SimplifiedAudioDevice(device.ID, device.DeviceFriendlyName);
+    }
+
+    /// <summary>
+    /// Registers the Audio events to propagate the events
+    /// </summary>
+    public static void RegisterAudioEvents()
+    {
+        if (NotificationClient == null)
         {
-            Id = device.ID,
-            Name = device.DeviceFriendlyName
-        };
+            NotificationClient = new();
+            DeviceEnum.RegisterEndpointNotificationCallback(NotificationClient);
+        }
+    }
+
+    /// <summary>
+    /// Generic Wrapper for Audio Device changes, including unplugging etc.
+    /// </summary>
+    public class AudioNotification : IMMNotificationClient
+    {
+        public void OnDeviceAdded(string pwstrDeviceId)
+        {
+            Console.WriteLine("OnDeviceAdded: {0}", pwstrDeviceId);
+            if (Audio.OnDeviceAdded != null) Audio.OnDeviceAdded.Invoke(this, pwstrDeviceId);
+        }
+
+        public void OnDeviceRemoved(string deviceId)
+        {
+            Console.WriteLine("OnDeviceRemoved: {0}", deviceId);
+            if (Audio.OnDeviceRemoved != null) Audio.OnDeviceRemoved.Invoke(this, deviceId);
+        }
+
+        public void OnDeviceStateChanged(string deviceId, DeviceState newState)
+        {
+            Console.WriteLine("OnDeviceStateChanged: {0} ; {1}", deviceId, newState);
+            if (Audio.OnDeviceStateChanged != null) Audio.OnDeviceStateChanged.Invoke(this, new DeviceStateChangedArgs(deviceId, newState));
+        }
+
+        public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key) { }
+
+        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId) { }
+    }
+
+    public class DeviceStateChangedArgs : EventArgs
+    {
+        public DeviceStateChangedArgs(string deviceId, DeviceState newState)
+        {
+            DeviceId = deviceId;
+            NewState = newState;
+        }
+
+        public string DeviceId { get; set; }
+        public DeviceState NewState { get; set; }
     }
 }
 
 public class SimplifiedAudioDevice
 {
-    public string? Id { get; set; }
-    public string? Name { get; set; }
+    public string Id { get; set; }
+    public string Name { get; set; }
 
-    public SimplifiedAudioDevice() { }
+    public SimplifiedAudioDevice(string id, string name) 
+    {
+        Id = id;
+        Name = name;
+    }
+
+    public override string ToString()
+    {
+        return Name!;
+    }
 }

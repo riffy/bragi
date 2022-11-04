@@ -27,7 +27,8 @@ public class GetAudioSettings : BragiCommand<NoParameter>
             ["Out"] = Audio.SimplifyMMDevice(BragiAudio.OutputDevice),
             ["Volume"] = BragiAudio.Volume,
             ["PushToTalkKey"] = BragiAudio.P2TKey,
-            ["InputGain"] = BragiAudio.InputGain
+            ["InputGain"] = BragiAudio.InputGain,
+            ["InputGate"] = BragiAudio.InputGate
         };
         return result;
     }

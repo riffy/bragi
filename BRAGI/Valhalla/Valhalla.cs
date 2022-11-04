@@ -15,6 +15,7 @@ using NAudio.CoreAudioApi;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Globalization;
+using BRAGI.Bragi.Events;
 
 namespace BRAGI.Valhalla;
 
@@ -69,8 +70,10 @@ public class Valhalla
     public Valhalla()
     {
         Bragi = new Bragi.Bragi();
+        BragiEvent.RegisterEventsForBroadcast();
         BragiCommands.AssociateCommands();
     }
+
     /// <summary>
     /// Starts a Valhalla Instance
     /// </summary>

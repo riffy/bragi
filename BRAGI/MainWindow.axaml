@@ -6,7 +6,8 @@
         x:Class="BRAGI.MainWindow"
         Title="BRAGI" Height="450" Width="500"
 		CanResize="False"
-		Closing="Window_Closing">
+		Closing="Window_Closing"
+		FontSize="14">
 	<TabControl
 		x:Name="Tabs"
 		>
@@ -43,81 +44,134 @@
 					<RowDefinition Height="1*"/>
 					<RowDefinition Height="1*"/>
 					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
 				</Grid.RowDefinitions>
 				<!-- Output Device-->
 				<TextBlock
+					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
 					Text="Output Device"
 					Grid.Column="0"
 					Grid.Row="0"/>
 				<ComboBox
+					x:Name="OutputDeviceSelector"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"
 					Grid.Column="1"
 					Grid.Row="0"
-					Name="OutputDeviceSelector"
-					SelectedItem="{Binding InputDevice, Mode=TwoWay}">
+					Items="{Binding OutputDevices}"
+					SelectedItem="{Binding SelectedOutputDevice}"
+					>
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
-							<TextBlock Text="{Binding DeviceFriendlyName}"/>
+							<TextBlock Text="{Binding Name}"/>
 						</DataTemplate>
 					</ComboBox.ItemTemplate>
 				</ComboBox>
-				<!--
 				<TextBlock
-					HorizontalAlignment="Left"
-					Text="{Binding OutputDevice.DeviceFriendlyName}"
-					Grid.Column="1"
-					Grid.Row="0"/>
-				-->
-				<TextBlock
+					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
 					Text="Output Volume"
 					Grid.Column="0"
 					Grid.Row="1"/>
 				<Slider
-					IsEnabled="False"
+					VerticalAlignment="Center"
+					IsEnabled="True"
 					Grid.Column="1"
 					Grid.Row="1"
-					HorizontalAlignment="Left"
+					HorizontalAlignment="Stretch"
 					Minimum="0" Maximum="100"
-					Value="{Binding Volume}"
+					Value="{Binding Volume, Mode=TwoWay}"
 					/>
 				<!-- Input Device-->
 				<TextBlock
+					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
 					Text="Input Device"
 					Grid.Column="0"
 					Grid.Row="2"/>
-				<TextBlock
-					HorizontalAlignment="Left"
-					Text="{Binding InputDevice.DeviceFriendlyName}"
+				<ComboBox
+					x:Name="InputDeviceSelector"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"
 					Grid.Column="1"
-					Grid.Row="2"/>
+					Grid.Row="2"
+					Items="{Binding InputDevices}"
+					SelectedItem="{Binding SelectedInputDevice}"
+					>
+					<ComboBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding Name}"/>
+						</DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<!-- Input Gain -->
 				<TextBlock
+					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
 					Text="Input Gain"
 					Grid.Column="0"
 					Grid.Row="3"/>
 				<Slider
-					IsEnabled="False"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"
+					IsEnabled="True"
 					Grid.Column="1"
 					Grid.Row="3"
-					HorizontalAlignment="Left"
 					Minimum="0" Maximum="100"
 					Value="{Binding InputGain}"
 					/>
+				<!-- Input Gate -->
 				<TextBlock
+					VerticalAlignment="Center"
 					HorizontalAlignment="Center"
 					Text="Input Gate"
 					Grid.Column="0"
 					Grid.Row="4"/>
 				<Slider
-					IsEnabled="False"
+					VerticalAlignment="Center"
+					HorizontalAlignment="Stretch"
+					IsEnabled="True"
 					Grid.Column="1"
 					Grid.Row="4"
-					HorizontalAlignment="Left"
 					Minimum="0" Maximum="100"
 					Value="{Binding InputGate}"
 					/>
+				<!-- Test -->
+				<Button
+					VerticalAlignment="Center"
+					HorizontalAlignment="Center"
+					Grid.Column="0"
+					Grid.Row="5"
+					Click="ToggleTest_Click"
+					Content="{Binding ToggleTestLabel}" />
+				<!-- Save & Cancel -->
+				<Grid
+					Grid.Column="1"
+					Grid.Row="6"
+					ShowGridLines="True"
+					VerticalAlignment="Center"
+					>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="1*"/>
+						<ColumnDefinition Width="1*"/>
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="1*"/>
+					</Grid.RowDefinitions>
+					<Button
+						IsEnabled="{Binding ChangeDetected}"
+						Grid.Column="0"
+						Grid.Row="0"
+						Click="SaveSettings_Click"
+						Content="Save" />
+					<Button
+						IsEnabled="{Binding ChangeDetected}"
+						Grid.Column="1"
+						Grid.Row="0"
+						Click="CancelSettings_Click"
+						Content="Cancel" />
+				</Grid>
 			</Grid>
 		</TabItem>
 		<!--

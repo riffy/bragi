@@ -47,8 +47,7 @@ public class Initialize : BragiCommand<InitializeParameter>
         Bragi.Instance.Initialize();
         try
         {
-            SetAudioSettings set = new();
-            await set.ExecuteInternal(parameters.AudioSettings);
+            await new SetAudioSettings().ExecuteInternal(parameters.AudioSettings);
             return await new GetAudioSettings().ExecuteInternal(new NoParameter());
         }
         catch

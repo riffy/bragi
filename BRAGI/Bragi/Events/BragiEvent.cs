@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using BRAGI.Bragi.Commands;
+using System;
+using System.Text.Json;
 
 namespace BRAGI.Bragi.Events;
 
@@ -11,6 +13,19 @@ public class BragiEvent
         Event = ev;
         Data = da;
     }
+    /// <summary>
+    /// Registers certain events that shall trigger a broadcast
+    /// </summary>
+    public static void RegisterEventsForBroadcast()
+    {
+        BragiAudio.SettingsChanged += BragiAudio_SettingsChanged;
+    }
+
+    private static async void BragiAudio_SettingsChanged(object? sender, EventArgs e)
+    {
+        BroadcastEvent("AudioSettingsChanged", await new GetAudioSettings().ExecuteInternal(new NoParameter()));
+    }
+
     /// <summary>
     /// Wrapper for the broadcast event
     /// </summary>

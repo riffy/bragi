@@ -7,6 +7,7 @@ using NAudio.Wave.SampleProviders;
 using System;
 using System.Data;
 using System.Text;
+using System.Threading;
 
 namespace BRAGI.Bragi;
 
@@ -16,26 +17,21 @@ namespace BRAGI.Bragi;
 public static class BragiAudio
 {
     #region Events
-    private static readonly MMDeviceEnumerator DeviceEnum = new();
-    private static BragiAudioNotification? NotificationClient;
     public static event EventHandler? SettingsChanged;
     public static event EventHandler<BragiWaveInEventArgs>? InputDataAvailable;
-    public static event EventHandler? OnDeviceAdded;
-    public static event EventHandler? OnDeviceRemoved;
-    public static event EventHandler? OnDeviceStateChanged;
     #endregion
     #region In/Output
     /// <summary>
     /// Speaker
     /// </summary>
-    private static MMDevice? _outputDevice;
     public static MMDevice? OutputDevice
     {
-        get { return _outputDevice; }
-        private set { 
-            _outputDevice = value;
+        get 
+        { 
+            return Audio.GetAudioDeviceByID(OutputDeviceId, DEVICETYPE.OUT); 
         }
     }
+    public static string? OutputDeviceId { get; private set; }
     private static WaveOutEvent? _outputEvent;
     private static MixingSampleProvider? _outputMixer;
 
@@ -43,16 +39,14 @@ public static class BragiAudio
     /// Microphone
     /// </summary>
     private static WasapiCapture? _inputCapture;
-
-    private static MMDevice? _inputDevice;
     public static MMDevice? InputDevice
     {
-        get { return _inputDevice; }
-        private set
-        { 
-            _inputDevice = value;
+        get
+        {
+            return Audio.GetAudioDeviceByID(InputDeviceId, DEVICETYPE.IN);
         }
     }
+    public static string? InputDeviceId { get; private set; }
 
     public static readonly float DefaultInputGain = 0.5f;
     private static float _inputGain = DefaultInputGain;
@@ -113,29 +107,26 @@ public static class BragiAudio
     }
     #endregion
 
-    public static void ApplySettings(MMDevice inputDevice, MMDevice outputDevice, int volume = 100, Key p2TKey = Key.None)
+    public static void ApplySettings(string inputDeviceId, string outputDeviceId,
+        int volume = 100, Key p2TKey = Key.None, float gain = 0.5f, float gate = 0.5f)
     {
-        Console.WriteLine("Applying new Settings {0} , {1}", Volume, P2TKey);
-        InputDevice = inputDevice;
-        OutputDevice = outputDevice;
+        Console.WriteLine("Applying new Settings {0} , {1}, {2}, {3}", Volume, P2TKey, gain, gate);
         Volume = volume;
         P2TKey = p2TKey;
-        //InitializeOutput();
-        InitializeInput();
-        RegisterEventCallback();
-
+        InputGain = gain;
+        InputGate = gate;
+        if (inputDeviceId != InputDeviceId)
+        {
+            InputDeviceId = inputDeviceId;
+            InitializeInput();
+        }
+        if (outputDeviceId != OutputDeviceId)
+        {
+            OutputDeviceId = outputDeviceId;
+            //InitializeOutput();
+        }
         if (SettingsChanged != null) SettingsChanged.Invoke(null, null!);
     }
-
-    internal static void RegisterEventCallback()
-    {
-        if (NotificationClient == null)
-        {
-            NotificationClient = new BragiAudioNotification();
-            DeviceEnum.RegisterEndpointNotificationCallback(NotificationClient);
-        }
-    }
-
     internal static void InitializeOutput()
     {
         if (_outputEvent != null)
@@ -196,41 +187,6 @@ public static class BragiAudio
             _inputCapture.Dispose();
             _inputCapture = null;
         }
-    }
-
-    public class BragiAudioNotification : IMMNotificationClient
-    {
-        
-
-        public void OnDeviceAdded(string pwstrDeviceId)
-        {
-            Console.WriteLine("Audio Device Added: {0}", pwstrDeviceId);
-        }
-
-        public void OnDeviceRemoved(string deviceId)
-        {
-            Console.WriteLine("Audio Device Unplugged: {0}", deviceId);
-            if (BragiAudio.OutputDevice != null && deviceId == BragiAudio.OutputDevice.ID)
-            {
-                Console.WriteLine("Audio Output was unplugged");
-            }
-            if (BragiAudio.InputDevice != null && deviceId == BragiAudio.InputDevice.ID)
-            {
-                if (deviceId == BragiAudio.InputDevice.ID)
-                {
-                    Console.WriteLine("Audio Input was unplugged");
-                }
-            }
-        }
-
-        public void OnDeviceStateChanged(string deviceId, DeviceState newState)
-        {
-            Console.WriteLine("Audio Device State Changed: {0} , {1}", deviceId, newState);
-        }
-
-        public void OnPropertyValueChanged(string pwstrDeviceId, PropertyKey key) { }
-
-        public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId) { }
     }
 
 }
