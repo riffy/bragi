@@ -17,6 +17,7 @@ namespace BRAGI.Bragi;
 public static class BragiAudio
 {
     #region Events
+    private static bool IsTalking { get; set; } = false;
     public static event EventHandler? SettingsChanged;
     public static event EventHandler<BragiWaveInEventArgs>? InputDataAvailable;
     #endregion
@@ -111,21 +112,39 @@ public static class BragiAudio
         int volume = 100, Key p2TKey = Key.None, float gain = 0.5f, float gate = 0.5f)
     {
         Console.WriteLine("Applying new Settings {0} , {1}, {2}, {3}", Volume, P2TKey, gain, gate);
-        Volume = volume;
         P2TKey = p2TKey;
-        InputGain = gain;
         InputGate = gate;
-        if (inputDeviceId != InputDeviceId)
+        if (ApplyInputCaptureSettings(inputDeviceId, gain))
         {
-            InputDeviceId = inputDeviceId;
-            InitializeInput();
+            InitializeCapture();
         }
+        
+        Volume = volume;
         if (outputDeviceId != OutputDeviceId)
         {
             OutputDeviceId = outputDeviceId;
             //InitializeOutput();
         }
         if (SettingsChanged != null) SettingsChanged.Invoke(null, null!);
+    }
+    /// <summary>
+    /// Applies the input settings that correspond to the capture. Returns true if a change in any value is detected
+    /// </summary>
+    /// <returns></returns>
+    internal static bool ApplyInputCaptureSettings(string inputDeviceId, float gain)
+    {
+        bool result = false;
+        if (inputDeviceId != InputDeviceId)
+        {
+            InputDeviceId = inputDeviceId;
+            result = true;
+        }
+        if (gain != InputGain)
+        {
+            InputGain = gain;
+            result = true;
+        }
+        return result;
     }
     internal static void InitializeOutput()
     {
@@ -138,19 +157,24 @@ public static class BragiAudio
         if (_outputMixer == null) _outputMixer = new(new WaveFormat());
         _outputMixer.ReadFully = true;
     }
-
-    internal static void InitializeInput()
+    /// <summary>
+    /// Initializees Capture with the selected Input Device.
+    /// </summary>
+    internal static void InitializeCapture()
     {
-        DisposeInput();
-        _inputCapture = new(InputDevice)
+        DisposeCapture();
+        if (InputDevice != null)
         {
-            ShareMode = AudioClientShareMode.Shared,
-            WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(48000, 1)
-        };
-        _inputCapture.StartRecording();
-        _inputCapture.DataAvailable += InputCapture_DataAvailable;
+            _inputCapture = new(InputDevice)
+            {
+                ShareMode = AudioClientShareMode.Shared,
+                WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(48000, 1)
+            };
+            _inputCapture.StartRecording();
+            _inputCapture.DataAvailable += InputCapture_DataAvailable;
+            InputDevice.AudioEndpointVolume.MasterVolumeLevelScalar = InputGain;
+        }
     }
-
     /// <summary>
     /// Takes the raw captured audio byte buffer and converts it to float buffer.
     /// WASAPI always records audio as IEEE floating point samples as determined above.
@@ -162,23 +186,16 @@ public static class BragiAudio
     {
         if (e == null) return;
         if (e.BytesRecorded <= 0) return;
-        WaveBuffer buf = new(e.Buffer);
-        bool gatePassed = false;
-        foreach (float item in buf.FloatBuffer)
+        if (InputDevice == null || InputDevice.AudioMeterInformation.MasterPeakValue < InputGate) return;
+        if (InputDataAvailable != null)
         {
-            if (item > InputGate)
-            {
-                gatePassed = true;
-                break;
-            }
-        }
-        if (gatePassed && InputDataAvailable != null) 
-        {
-            InputDataAvailable.Invoke(sender, new BragiWaveInEventArgs(buf.FloatBuffer));
+            InputDataAvailable.Invoke(sender, new BragiWaveInEventArgs(new WaveBuffer(e.Buffer).FloatBuffer));
         }
     }
-
-    public static void DisposeInput()
+    /// <summary>
+    /// Disposes the capture
+    /// </summary>
+    public static void DisposeCapture()
     {
         if (_inputCapture != null)
         {

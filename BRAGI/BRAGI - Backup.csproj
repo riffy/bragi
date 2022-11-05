@@ -10,12 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
-    <None Remove="Assets\Images\odin-logo-white.png" />
     <None Remove="odin.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <AvaloniaResource Include="Assets\Images\naudio-logo.png" />
-    <AvaloniaResource Include="Assets\Images\odin-logo-white.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="odin.dll">
@@ -46,6 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Images\odin_logo_white.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="..\odin-wrapper-csharp\CShared.projitems" Label="Shared" />
 </Project>

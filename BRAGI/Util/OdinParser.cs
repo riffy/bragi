@@ -17,7 +17,7 @@ public static class OdinParser
     public static async Task<object?> ParsePeer(Peer? p)
     {
         if (p == null) return null;
-        Dictionary<string, object> result = new()
+        Dictionary<string, object?> result = new()
         {
             ["Id"] = p.Id,
             ["RoomName"] = p.RoomName,

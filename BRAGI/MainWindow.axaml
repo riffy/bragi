@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ui="using:FluentAvalonia.UI.Controls"
         mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
         x:Class="BRAGI.MainWindow"
         Title="BRAGI" Height="450" Width="500"
@@ -31,8 +32,7 @@
 			x:Name="BragiTab"
 			IsVisible="{Binding BragiLoaded}"
 			Header="Bragi">
-			<Grid
-				ShowGridLines="True">
+			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="1*"/>
 					<ColumnDefinition Width="2*"/>
@@ -118,7 +118,7 @@
 					IsEnabled="True"
 					Grid.Column="1"
 					Grid.Row="3"
-					Minimum="0" Maximum="100"
+					Minimum="0" Maximum="1"
 					Value="{Binding InputGain}"
 					/>
 				<!-- Input Gate -->
@@ -134,7 +134,7 @@
 					IsEnabled="True"
 					Grid.Column="1"
 					Grid.Row="4"
-					Minimum="0" Maximum="100"
+					Minimum="0" Maximum="1"
 					Value="{Binding InputGate}"
 					/>
 				<!-- Test -->
@@ -145,6 +145,15 @@
 					Grid.Row="5"
 					Click="ToggleTest_Click"
 					Content="{Binding ToggleTestLabel}" />
+				<ProgressBar
+					x:Name="PeakProgressBar"
+					Grid.Column="1"
+					Grid.Row="5"
+					HorizontalAlignment="Stretch"
+					Maximum="1"
+					Minimum="0"
+					Value="{Binding Peak}"
+					/>
 				<!-- Save & Cancel -->
 				<Grid
 					Grid.Column="1"
@@ -174,10 +183,43 @@
 				</Grid>
 			</Grid>
 		</TabItem>
-		<!--
-		<TabItem Header="Odin"></TabItem>
-		<TabItem Header="Info"></TabItem>
-		-->
+		<TabItem Header="Info">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="1*"/>
+					<ColumnDefinition Width="1*"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
+					<RowDefinition Height="1*"/>
+				</Grid.RowDefinitions>
+				<StackPanel
+					Grid.Column="0"
+					Grid.Row="1"
+					HorizontalAlignment="Center">
+					<Image Source="/Assets/Images/odin-logo-white.png"></Image>
+					<ui:HyperlinkButton 
+						Content="ODIN ⇱"
+                        HorizontalAlignment="Center"
+                        NavigateUri="https://www.4players.io/odin/"
+                        Name="ODINLinkBtn"
+                        ToolTip.Tip="https://www.4players.io/odin/"/>
+				</StackPanel>
+				<StackPanel
+					Grid.Column="1"
+					Grid.Row="1"
+					HorizontalAlignment="Center">
+					<Image Source="/Assets/Images/naudio-logo.png"></Image>
+					<ui:HyperlinkButton
+						Content="NAudio ⇱"
+                        HorizontalAlignment="Center"
+                        NavigateUri="https://github.com/naudio/NAudio/"
+                        Name="NAUDIOLinkBtn"
+                        ToolTip.Tip="https://github.com/naudio/NAudio/"/>
+				</StackPanel>
+			</Grid>
+		</TabItem>
 		<TabItem Header="Log">
 			<StackPanel>
 				<TextBox

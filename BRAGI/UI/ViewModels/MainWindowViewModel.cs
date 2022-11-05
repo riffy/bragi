@@ -1,15 +1,18 @@
 ﻿using Avalonia.Data.Converters;
+using Avalonia.Media;
 using Avalonia.Threading;
 using BRAGI.Bragi;
 using BRAGI.Bragi.Commands;
 using BRAGI.Util;
 using NAudio.CoreAudioApi;
+using NAudio.Wave;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Input;
 
 namespace BRAGI.UI.ViewModels;
@@ -52,10 +55,6 @@ public class MainWindowViewModel : ViewModelBase
             _toggleTestLabel = value;
             OnPropertyChanged(nameof(ToggleTestLabel));
         }
-    }
-    public bool TestModeActive
-    {
-        get { return _toggleTestLabel != StartTestLabel; }
     }
     #endregion
     #region Audio Output
@@ -132,8 +131,8 @@ public class MainWindowViewModel : ViewModelBase
             }
         }
     }
-    private int _inputGain;
-    public int InputGain
+    private float _inputGain;
+    public float InputGain
     {
         get => _inputGain;
         set
@@ -142,12 +141,16 @@ public class MainWindowViewModel : ViewModelBase
             {
                 _inputGain = value;
                 ChangeDetected = true;
+                if (TestModeActive && SelectedTestDevice != null)
+                {
+                    SelectedTestDevice.AudioEndpointVolume.MasterVolumeLevelScalar = value;
+                }
                 OnPropertyChanged(nameof(InputGain));
             }
         }
     }
-    private int _inputGate;
-    public int InputGate
+    private float _inputGate;
+    public float InputGate
     {
         get => _inputGate;
         set
@@ -161,15 +164,37 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
     #endregion
+    #region InputTest
+    public bool TestModeActive
+    {
+        get { return _capture != null; }
+    }
+    private float _peak;
+    public float Peak
+    {
+        get => _peak;
+        set
+        {
+            if (_peak != value)
+            {
+                _peak = value;
+                OnPropertyChanged(nameof(Peak));
+            }
+        }
+    }
+    private WasapiCapture? _capture;
+    public MMDevice? SelectedTestDevice { get; private set; }
+    private readonly SynchronizationContext synchronizationContext;
+    #endregion
     public MainWindowViewModel()
     {
+        synchronizationContext = SynchronizationContext.Current!;
         BragiAudio.SettingsChanged += BragiAudio_SettingsChanged;
         Bragi.Bragi.StateChanged += Bragi_StateChanged;
         Audio.OnDeviceAdded += Audio_OnDeviceAdded;
         Audio.OnDeviceRemoved += Audio_OnDeviceRemoved;
         Audio.OnDeviceStateChanged += Audio_OnDeviceStateChanged;
     }
-
     public async void SaveSettings()
     {
         if (SelectedOutputDevice == null || !ValidateAudioDevice(SelectedOutputDevice, DEVICETYPE.OUT))
@@ -188,13 +213,12 @@ public class MainWindowViewModel : ViewModelBase
                     SelectedOutputDevice.Id,
                     Volume,
                     BragiAudio.P2TKey,
-                    (float)InputGain / 100,
-                    (float)InputGate / 100)
+                    (float)Math.Round(InputGain * 100f) / 100f,
+                    (float)Math.Round(InputGate * 100f) / 100f)
                 );
             Console.WriteLine(BragiAudio.InputGain);
         }
     }
-
     public async void ToggleTest()
     {
         if (!TestModeActive)
@@ -206,18 +230,64 @@ public class MainWindowViewModel : ViewModelBase
             StopInputTest();
         }
     }
-
     private async void StartInputTest()
     {
-        Console.WriteLine("Starting input Test");
-        ToggleTestLabel = EndTestLabel;
+        DisposeTest();
+        if (SelectedInputDevice == null || !ValidateAudioDevice(SelectedInputDevice, DEVICETYPE.IN))
+        {
+            await MessageBox.Show(MainWindow.Instance!, "Failure while retrieving selected input device.", "Unknown Input Device", MessageBox.MessageBoxButtons.Ok);
+        }
+        else
+        {
+            Console.WriteLine("Starting Input Test");
+            ToggleTestLabel = EndTestLabel;
+            SelectedTestDevice = Audio.GetAudioDeviceByID(SelectedInputDevice.Id, DEVICETYPE.IN);
+            if (SelectedTestDevice != null)
+            {
+                _capture = new(SelectedTestDevice)
+                {
+                    ShareMode = AudioClientShareMode.Shared,
+                    WaveFormat = WaveFormat.CreateIeeeFloatWaveFormat(48000, 1)
+                };
+                _capture.StartRecording();
+                _capture.DataAvailable += UpdatePeakMeter;
+                SelectedTestDevice.AudioEndpointVolume.MasterVolumeLevelScalar = InputGain;
+            }
+        }
+
+    }
+    private void UpdatePeakMeter(object? sender, WaveInEventArgs e)
+    {
+        // can't access this on a different thread from the one it was created on, so get back to GUI thread
+        synchronizationContext.Post((s) =>
+        {
+            Peak = SelectedTestDevice!.AudioMeterInformation.MasterPeakValue;
+            if (Peak >= InputGate)
+            {
+                synchronizationContext.Post(s => MainWindow.Instance!.PeakProgressBar.Foreground = Brushes.DarkOrange, null);
+            }
+            else
+            {
+                synchronizationContext.Post(s => MainWindow.Instance!.PeakProgressBar.Foreground = Brushes.LightGray, null);
+            }
+        }, null);
     }
     private async void StopInputTest()
     {
-        Console.WriteLine("Stopping input Test");
+        Console.WriteLine("Stopping Input Test");
+        DisposeTest();
         ToggleTestLabel = StartTestLabel;
+        Peak = 0f;
     }
-
+    private void DisposeTest()
+    {
+        if (_capture != null)
+        {
+            _capture.StopRecording();
+            _capture.Dispose();
+            _capture = null;
+        }
+    }
     private bool ValidateAudioDevice(SimplifiedAudioDevice? sad, DEVICETYPE dt)
     {
         if (sad == null) return false;
@@ -225,22 +295,18 @@ public class MainWindowViewModel : ViewModelBase
         if (dev == null) return false;
         return true;
     }
-
     private void Audio_OnDeviceStateChanged(object? sender, Audio.DeviceStateChangedArgs e)
     {
         ReadAudioAndUpdate();
     }
-
     private void Audio_OnDeviceRemoved(object? sender, string e)
     {
         ReadAudioAndUpdate();
     }
-
     private void Audio_OnDeviceAdded(object? sender, string e)
     {
         ReadAudioAndUpdate();
     }
-
     private void Bragi_StateChanged(object? sender, EventArgs e)
     {
         BragiLoaded = Bragi.Bragi.Instance != null && Bragi.Bragi.Instance.State == BRAGISTATE.INITIALIZED;
@@ -250,7 +316,6 @@ public class MainWindowViewModel : ViewModelBase
         });
         ReadAudioAndUpdate();
     }
-
     private void BragiAudio_SettingsChanged(object? sender, EventArgs e)
     {
         ReadAudioAndUpdate();
@@ -272,9 +337,9 @@ public class MainWindowViewModel : ViewModelBase
         {
             SelectedInputDevice = InputDevices.First(device => device.Id == BragiAudio.InputDeviceId);
         }
-        InputGain = (int)(BragiAudio.InputGain * 100);
+        InputGain = BragiAudio.InputGain;
         Volume = BragiAudio.Volume;
-        InputGate = (int)(BragiAudio.InputGate * 100);
+        InputGate = BragiAudio.InputGate;
         ChangeDetected = false;
     }
 }
