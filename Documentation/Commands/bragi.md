@@ -40,7 +40,7 @@ Name | Type | Required ? | Description
 ```ts
 interface InitializeCommand {
     AudioSettings: AudioSettings;
-    OdinVersion?: string;
+    OdinServer?: string;
     AccessKey?: string;
 }
 ```

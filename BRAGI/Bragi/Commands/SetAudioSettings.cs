@@ -1,6 +1,8 @@
 ﻿using Avalonia.Input;
 using BRAGI.Util;
+using BRAGI.Util.AudioUtil;
 using NAudio.CoreAudioApi;
+using SharpHook.Native;
 using System;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -21,12 +23,12 @@ public class AudioSettingsParameter : BragiParameter
     [OptionalParameter]
     public int Volume { get; set; }
     [OptionalParameter]
-    public Key PushToTalkKey { get; set; }
+    public KeyCode PushToTalkKey { get; set; }
     [OptionalParameter]
     public float InputGain { get; set; }
     [OptionalParameter]
     public float InputGate { get; set; }
-    public AudioSettingsParameter(string inDeviceId, string outDeviceId, int volume, Key pushToTalkKey, float inputGain, float inputGate)
+    public AudioSettingsParameter(string inDeviceId, string outDeviceId, int volume, KeyCode pushToTalkKey, float inputGain, float inputGate)
     {
         InDeviceId = inDeviceId;
         OutDeviceId = outDeviceId;
@@ -65,14 +67,14 @@ public class SetAudioSettings : BragiCommand<AudioSettingsParameter>
     {
         if (!CheckParameters(parameters)) return null;
         int currentVol = (Bragi.Instance == null) ? BragiAudio.DefaultVolume : BragiAudio.Volume;
-        Key P2TKey = (Bragi.Instance == null) ? BragiAudio.DefaultP2TKey : BragiAudio.P2TKey;
+        KeyCode P2TKey = (Bragi.Instance == null) ? BragiAudio.DefaultP2TKey : BragiAudio.P2TKey;
         float inputGain = (Bragi.Instance == null) ? BragiAudio.DefaultInputGain : BragiAudio.InputGain;
         float inputGate = (Bragi.Instance == null) ? BragiAudio.DefaultInputGate : BragiAudio.InputGate;
         return new AudioSettingsParameter(
             (string)parameters!["InDeviceId"]!,
             (string)parameters!["OutDeviceId"]!,
             (parameters!["Volume"] != null) ? (int)parameters!["Volume"]! : currentVol,
-            (parameters!["PushToTalkKey"] != null) ? (Key)(int)parameters!["PushToTalkKey"]! : P2TKey,
+            (parameters!["PushToTalkKey"] != null) ? (KeyCode)(int)parameters!["PushToTalkKey"]! : P2TKey,
             (parameters!["InputGain"] != null) ? (float)parameters!["InputGain"]! : inputGain,
             (parameters!["InputGate"] != null) ? (float)parameters!["InputGate"]! : inputGate);
     }

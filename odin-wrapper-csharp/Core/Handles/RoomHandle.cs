@@ -11,7 +11,7 @@ namespace OdinNative.Core.Handles
     class RoomHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         public static implicit operator IntPtr(RoomHandle handle) => handle?.DangerousGetHandle() ?? IntPtr.Zero;
-        internal NativeMethods.OdinRoomDestroyDelegate Free;
+        internal NativeMethods.OdinRoomDestroyDelegate? Free;
 
         /// <summary>
         /// Creates a new ODIN room handle
@@ -43,7 +43,7 @@ namespace OdinNative.Core.Handles
             try
             {
                 if(OdinLibrary.IsInitialized)
-                    Free(handle);
+                    Free!(handle);
 
                 SetHandleAsInvalid();
             }

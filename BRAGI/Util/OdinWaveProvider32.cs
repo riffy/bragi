@@ -10,7 +10,7 @@ namespace BRAGI.Util;
 public class OdinWaveProvider32 : WaveProvider32
 {
     public OdinNative.Odin.Media.PlaybackStream Media { get; private set; }
-    public bool ValidFormat { get { return WaveFormat!.SampleRate == 48000 && WaveFormat.Channels == 1; } }
+    public bool ValidFormat { get { return WaveFormat.SampleRate == 48000 && WaveFormat.Channels == 1; } }
 
     public OdinWaveProvider32(OdinNative.Odin.Media.PlaybackStream media)
     {
@@ -27,8 +27,8 @@ public class OdinWaveProvider32 : WaveProvider32
 
 public abstract class WaveProvider32 : IWaveProvider
 {
-    private WaveFormat? waveFormat;
-    public WaveFormat? WaveFormat
+    private WaveFormat waveFormat;
+    public WaveFormat WaveFormat
     {
         get { return waveFormat; }
     }
@@ -38,11 +38,6 @@ public abstract class WaveProvider32 : IWaveProvider
     }
 
     public WaveProvider32(int sampleRate, int channels)
-    {
-        SetWaveFormat(sampleRate, channels);
-    }
-
-    public void SetWaveFormat(int sampleRate, int channels)
     {
         waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, channels);
     }

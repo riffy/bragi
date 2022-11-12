@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using BRAGI.Bragi;
 using BRAGI.Bragi.Commands;
 using BRAGI.Util;
+using BRAGI.Util.AudioUtil;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System;
@@ -194,6 +195,7 @@ public class MainWindowViewModel : ViewModelBase
         Audio.OnDeviceAdded += Audio_OnDeviceAdded;
         Audio.OnDeviceRemoved += Audio_OnDeviceRemoved;
         Audio.OnDeviceStateChanged += Audio_OnDeviceStateChanged;
+        Valhalla.Valhalla.HeroLeftValhalla += Valhalla_HeroLeftValhalla;
     }
     public async void SaveSettings()
     {
@@ -342,4 +344,13 @@ public class MainWindowViewModel : ViewModelBase
         InputGate = BragiAudio.InputGate;
         ChangeDetected = false;
     }
+
+    private void Valhalla_HeroLeftValhalla(object? sender, EventArgs e)
+    {
+        if (TestModeActive)
+        {
+            StopInputTest();
+        }
+    }
+
 }

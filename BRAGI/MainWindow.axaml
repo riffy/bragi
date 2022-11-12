@@ -158,7 +158,6 @@
 				<Grid
 					Grid.Column="1"
 					Grid.Row="6"
-					ShowGridLines="True"
 					VerticalAlignment="Center"
 					>
 					<Grid.ColumnDefinitions>

@@ -117,7 +117,7 @@ namespace OdinNative.Odin.Peer
                 if (disposing)
                 {
                     Medias.FreeAll();
-                    UserData = null;
+                    UserData = null!;
                 }
 
                 disposedValue = true;

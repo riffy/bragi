@@ -1,8 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform;
 using Avalonia.Threading;
+using Avalonia.VisualTree;
+using Avalonia.Win32;
 using BRAGI.UI.ViewModels;
 using BRAGI.Util;
+using BRAGI.Util.AudioUtil;
 using BRAGI.Valhalla;
 using System;
 using System.ComponentModel;
@@ -20,6 +24,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         Console.SetOut(new ControlWriter(ConsoleBox));
         Audio.RegisterAudioEvents();
+        KeyInput.InitializeHook();
         viewModel = new();
         DataContext = viewModel;
         try
@@ -30,6 +35,11 @@ public partial class MainWindow : Window
         {
             Console.WriteLine(e);
         }
+    }
+
+    private void MainWindow_KeyDown(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        Console.WriteLine("Key Down: {0}", e.Key);
     }
 
     private void ToggleTest_Click(object sender, RoutedEventArgs e)

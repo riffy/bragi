@@ -34,16 +34,15 @@ public enum VALHALLASTATE
 /// </summary>
 public class Valhalla
 {
-    public static Valhalla? Instance;
-    public static VALHALLASTATE State = VALHALLASTATE.CLOSED;
+    public static event EventHandler? HeroLeftValhalla;
+    public static Valhalla? Instance { get; private set; }
+    public static VALHALLASTATE State { get; private set; } = VALHALLASTATE.CLOSED;
     /// <summary>
     /// Websocket Server and server properties
     /// </summary>
     public WebSocketServer? Server { get; private set; }
     public string? ValhallaOpenedTimestamp { get; set; }
-
     public bool ValhallaOpen { get; private set; }
-
     /// <summary>
     /// Hero / Client
     /// </summary>
@@ -60,10 +59,7 @@ public class Valhalla
             _heroArrived = value;
         }
     }
-
     public Bragi.Bragi Bragi { get; private set; }
-
-
     /// <summary>
     /// Bragi WebSocket
     /// </summary>
@@ -73,7 +69,6 @@ public class Valhalla
         BragiEvent.RegisterEventsForBroadcast();
         BragiCommands.AssociateCommands();
     }
-
     /// <summary>
     /// Starts a Valhalla Instance
     /// </summary>
@@ -149,7 +144,18 @@ public class Valhalla
             Console.WriteLine("Valhalla stopped");
         }
     }
-
+    /// <summary>
+    /// Performs action when client disconnects
+    /// </summary>
+    public void HeroLeft()
+    {
+        HeroArrived = false;
+        if (Bragi != null)
+        {
+            Bragi.CleanUp();
+        }
+        if (HeroLeftValhalla != null) HeroLeftValhalla.Invoke(this, null!);
+    }
     /// <summary>
     /// Broadcasts a specific message on the websocket server.
     /// Broadcast is only performed if a client is connected

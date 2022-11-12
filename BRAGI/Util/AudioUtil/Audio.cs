@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using BRAGI.Bragi;
 using System;
 using NAudio.CoreAudioApi.Interfaces;
-using BRAGI.Bragi.Commands;
 
-namespace BRAGI.Util;
+namespace BRAGI.Util.AudioUtil;
 
 public static class Audio
 {
@@ -88,7 +87,6 @@ public static class Audio
         };
         return result;
     }
-
     /// <summary>
     /// Returns an MMDevice based on the provided ID.
     /// </summary>
@@ -100,7 +98,7 @@ public static class Audio
         MMDevice? result = null;
         MMDeviceEnumerator enumerator = new();
         foreach (var endpoint in
-                 enumerator.EnumerateAudioEndPoints((dt == DEVICETYPE.IN) ? DataFlow.Capture : DataFlow.Render, DeviceState.Active))
+                 enumerator.EnumerateAudioEndPoints(dt == DEVICETYPE.IN ? DataFlow.Capture : DataFlow.Render, DeviceState.Active))
         {
             if (endpoint.ID == id)
             {
@@ -112,7 +110,6 @@ public static class Audio
         enumerator.Dispose();
         return result;
     }
-
     /// <summary>
     /// Parses a given MMDevice to simplified version.
     /// </summary>
@@ -123,7 +120,6 @@ public static class Audio
         if (device == null) return null;
         return new SimplifiedAudioDevice(device.ID, device.DeviceFriendlyName);
     }
-
     /// <summary>
     /// Registers the Audio events to propagate the events
     /// </summary>
@@ -135,7 +131,6 @@ public static class Audio
             DeviceEnum.RegisterEndpointNotificationCallback(NotificationClient);
         }
     }
-
     /// <summary>
     /// Generic Wrapper for Audio Device changes, including unplugging etc.
     /// </summary>
@@ -182,7 +177,7 @@ public class SimplifiedAudioDevice
     public string Id { get; set; }
     public string Name { get; set; }
 
-    public SimplifiedAudioDevice(string id, string name) 
+    public SimplifiedAudioDevice(string id, string name)
     {
         Id = id;
         Name = name;

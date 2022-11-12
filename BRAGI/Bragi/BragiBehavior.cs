@@ -92,13 +92,10 @@ public class BragiBehavior : WebSocketBehavior
     protected override void OnClose(CloseEventArgs e)
     {
         Console.WriteLine("A Hero has left Valhalla with runes: " + e.Code);
-        if (e.Code != ((ushort)CloseStatusCode.PolicyViolation))
+        if (e.Code != ((ushort)CloseStatusCode.PolicyViolation) &&
+            Valhalla.Valhalla.Instance != null)
         {
-            if (Valhalla.Valhalla.Instance!.Bragi != null)
-            {
-                Valhalla.Valhalla.Instance.Bragi.CleanUp();
-            }
-            Valhalla.Valhalla.Instance.HeroArrived = false;
+            Valhalla.Valhalla.Instance.HeroLeft();
         }
     }
 

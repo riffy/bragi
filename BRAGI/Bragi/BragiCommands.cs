@@ -52,6 +52,7 @@ public static class BragiCommands
         // -- Odin Specific
         Commands.Add(nameof(JoinRoom), new JoinRoom());
         Commands.Add(nameof(LeaveRoom), new LeaveRoom());
+        Commands.Add(nameof(SetRoomConfig), new SetRoomConfig());
     }
 
     public static BragiCommand GetFunction(string key)

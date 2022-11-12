@@ -1,13 +1,8 @@
-﻿using Avalonia.Input;
-using BRAGI.Util;
+﻿using BRAGI.Util.AudioUtil;
 using NAudio.CoreAudioApi;
-using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
+using SharpHook.Native;
 using System;
-using System.Data;
-using System.Text;
-using System.Threading;
 
 namespace BRAGI.Bragi;
 
@@ -21,7 +16,7 @@ public static class BragiAudio
     public static event EventHandler? SettingsChanged;
     public static event EventHandler<BragiWaveInEventArgs>? InputDataAvailable;
     #endregion
-    #region In/Output
+    #region Output
     /// <summary>
     /// Speaker
     /// </summary>
@@ -33,9 +28,24 @@ public static class BragiAudio
         }
     }
     public static string? OutputDeviceId { get; private set; }
-    private static WaveOutEvent? _outputEvent;
-    private static MixingSampleProvider? _outputMixer;
 
+    public static AsioOut? AsioOut { get; set; }
+
+    /// <summary>
+    /// Volume
+    /// </summary>
+    public static readonly int DefaultVolume = 100;
+    private static int _volume = DefaultVolume;
+    public static int Volume
+    {
+        get { return _volume; }
+        private set
+        {
+            _volume = value;
+        }
+    }
+    #endregion
+    #region Input
     /// <summary>
     /// Microphone
     /// </summary>
@@ -76,9 +86,9 @@ public static class BragiAudio
     /// <summary>
     /// Push To Talk
     /// </summary>
-    public static readonly Key DefaultP2TKey = Key.None;
-    private static Key _p2tKey = DefaultP2TKey;
-    public static Key P2TKey 
+    public static readonly KeyCode DefaultP2TKey = KeyCode.VcUndefined;
+    private static KeyCode _p2tKey = DefaultP2TKey;
+    public static KeyCode P2TKey 
     {
         get { return _p2tKey; }
         set
@@ -90,26 +100,21 @@ public static class BragiAudio
     {
         get
         {
-            return (_p2tKey != Key.None);
-        }
-    }
-
-    /// <summary>
-    /// Volume
-    /// </summary>
-    public static readonly int DefaultVolume = 100;
-    private static int _volume = DefaultVolume;
-    public static int Volume
-    {
-        get { return _volume; }
-        private set {
-            _volume = value;
+            return (_p2tKey != KeyCode.VcUndefined);
         }
     }
     #endregion
-
+    /// <summary>
+    /// Applies Audio Settings
+    /// </summary>
+    /// <param name="inputDeviceId"></param>
+    /// <param name="outputDeviceId"></param>
+    /// <param name="volume"></param>
+    /// <param name="p2TKey"></param>
+    /// <param name="gain"></param>
+    /// <param name="gate"></param>
     public static void ApplySettings(string inputDeviceId, string outputDeviceId,
-        int volume = 100, Key p2TKey = Key.None, float gain = 0.5f, float gate = 0.5f)
+        int volume = 100, KeyCode p2TKey = KeyCode.VcUndefined, float gain = 0.5f, float gate = 0.5f)
     {
         Console.WriteLine("Applying new Settings {0} , {1}, {2}, {3}", Volume, P2TKey, gain, gate);
         P2TKey = p2TKey;
@@ -118,15 +123,65 @@ public static class BragiAudio
         {
             InitializeCapture();
         }
-        
+
         Volume = volume;
-        if (outputDeviceId != OutputDeviceId)
+        if (ApplyOutputSettings(outputDeviceId))
         {
-            OutputDeviceId = outputDeviceId;
-            //InitializeOutput();
+            InitializeOutput();
         }
         if (SettingsChanged != null) SettingsChanged.Invoke(null, null!);
     }
+    /// <summary>
+    /// Resets the audio settings
+    /// </summary>
+    public static void ResetSettings()
+    {
+        DisposeCapture();
+        DisposeOutput();
+        InputDeviceId = null;
+        OutputDeviceId = null;
+        P2TKey = DefaultP2TKey;
+        InputGate = DefaultInputGate;
+        InputGain = DefaultInputGain;
+    }
+    #region Output
+    internal static bool ApplyOutputSettings(string outputDeviceId)
+    {
+        bool result = false;
+        if (outputDeviceId != OutputDeviceId)
+        {
+            OutputDeviceId = outputDeviceId;
+            result = true;
+        }
+        return result;
+    }
+    internal static void InitializeOutput()
+    {
+        DisposeOutput();
+        /*
+        if (_outputEvent != null)
+        {
+            _outputEvent.Dispose();
+        }
+        _outputEvent = new WaveOutEvent();
+
+        if (_outputMixer == null) _outputMixer = new(new WaveFormat());
+        _outputMixer.ReadFully = true;
+        */
+    }
+    internal static void DisposeOutput()
+    {
+
+    }
+    /// <summary>
+    /// Takes an audio stream and mixes it in based on the provided config
+    /// </summary>
+    public static void MixinAudioStream()
+    {
+
+    }
+    #endregion
+    #region Capture
     /// <summary>
     /// Applies the input settings that correspond to the capture. Returns true if a change in any value is detected
     /// </summary>
@@ -145,17 +200,6 @@ public static class BragiAudio
             result = true;
         }
         return result;
-    }
-    internal static void InitializeOutput()
-    {
-        if (_outputEvent != null)
-        {
-            _outputEvent.Dispose();
-        }
-        _outputEvent = new WaveOutEvent();
-
-        if (_outputMixer == null) _outputMixer = new(new WaveFormat());
-        _outputMixer.ReadFully = true;
     }
     /// <summary>
     /// Initializees Capture with the selected Input Device.
@@ -195,7 +239,7 @@ public static class BragiAudio
     /// <summary>
     /// Disposes the capture
     /// </summary>
-    public static void DisposeCapture()
+    internal static void DisposeCapture()
     {
         if (_inputCapture != null)
         {
@@ -205,7 +249,7 @@ public static class BragiAudio
             _inputCapture = null;
         }
     }
-
+    #endregion
 }
 
 public class BragiWaveInEventArgs : EventArgs
